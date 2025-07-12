@@ -12,17 +12,17 @@ const clothesSchema = new mongoose.Schema({
   },
   category: {
     type: String,
-    enum: ['Men', 'Women', 'Kids', 'Unisex', 'Other'],
+    enum: ['Tops', 'Bottoms', 'Dresses', 'Outerwear', 'Shoes', 'Accessories', 'Bags', 'Jewelry'],
     required: true
   },
   size: {
     type: String,
-    enum: ['XS', 'S', 'M', 'L', 'XL', 'XXL', 'Free Size', 'Other'],
+    enum: ['XS', 'S', 'M', 'L', 'XL', 'XXL', 'One Size', 'Custom'],
     required: true
   },
   condition: {
     type: String,
-    enum: ['Like New', 'Good', 'Worn', 'Needs Repair'],
+    enum: ['New with tags', 'Like new', 'Excellent', 'Good', 'Fair', 'Poor'],
     default: 'Good'
   },
   points: {
@@ -55,6 +55,27 @@ const clothesSchema = new mongoose.Schema({
   approved: {
     type: Boolean,
     default: false
+  },
+  // Additional fields from frontend
+  points: {
+    type: Number,
+    default: 50
+  },
+  tags: [{
+    type: String,
+    trim: true
+  }],
+  brand: {
+    type: String,
+    trim: true
+  },
+  color: {
+    type: String,
+    trim: true
+  },
+  material: {
+    type: String,
+    trim: true
   }
 }, {
   timestamps: true

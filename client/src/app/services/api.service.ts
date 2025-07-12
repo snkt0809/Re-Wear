@@ -1,6 +1,7 @@
 import { Injectable } from '@angular/core';
 import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { Observable } from 'rxjs';
+import { API_CONFIG } from '../config/api.config';
 
 export interface User {
   id: string;
@@ -53,12 +54,15 @@ export interface Swap {
   providedIn: 'root'
 })
 export class ApiService {
-  private baseUrl = 'http://localhost:8000/api';
+  private baseUrl = API_CONFIG.BACKEND.BASE_URL;
 
   constructor(private http: HttpClient) {}
 
   private getHeaders(): HttpHeaders {
-    const token = localStorage.getItem('token');
+    let token = '';
+    if (typeof window !== 'undefined') {
+      token = localStorage.getItem('token') || '';
+    }
     return new HttpHeaders({
       'Content-Type': 'application/json',
       'Authorization': token ? `Bearer ${token}` : ''
@@ -106,6 +110,10 @@ export class ApiService {
     imageUrls: string[];
   }): Observable<Item> {
     return this.http.post<Item>(`${this.baseUrl}/items/add`, itemData, { headers: this.getHeaders() });
+  }
+
+  getUserItems(): Observable<Item[]> {
+    return this.http.get<Item[]>(`${this.baseUrl}/items/my-items`, { headers: this.getHeaders() });
   }
 
   // Swap endpoints

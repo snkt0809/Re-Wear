@@ -7,8 +7,12 @@ const {
   getMyItems,
   getItemById,
   getAllClothes
+  testEnums
 } = require('../controllers/itemController');
 const { protect } = require('../middleware/authMiddleware');
+
+// Test endpoint to check enum values (no auth required)
+router.get('/test-enums', testEnums);
 
 router.post('/add', protect, addClothingItem);
 router.get('/', protect, getApprovedItems);

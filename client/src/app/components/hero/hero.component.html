@@ -1,0 +1,29 @@
+<div class="hero-section">
+  <!-- Animated background elements -->
+  <div class="floating-elements">
+    <div class="floating-icon" style="--delay: 0s">👕</div>
+    <div class="floating-icon" style="--delay: 2s">👖</div>
+    <div class="floating-icon" style="--delay: 4s">👗</div>
+    <div class="floating-icon" style="--delay: 1s">👜</div>
+    <div class="floating-icon" style="--delay: 3s">👠</div>
+    <div class="floating-icon" style="--delay: 5s">🧥</div>
+  </div>
+  
+  <!-- Pulsing circle background -->
+  <div class="pulse-circles">
+    <div class="pulse-circle"></div>
+    <div class="pulse-circle" style="--delay: 1s"></div>
+    <div class="pulse-circle" style="--delay: 2s"></div>
+  </div>
+  
+  <h1>Welcome to ReWear</h1>
+  <p class="hero-subtitle">Sustainable Fashion Exchange Platform</p>
+  <p class="hero-description">
+    Exchange unused clothing through direct swaps or point-based redemption. Give fashion a second life while reducing textile waste and promoting sustainable fashion.
+  </p>
+  <div class="cta-buttons">
+    <a routerLink="/browse" class="btn btn-primary">Browse Items</a>
+    <a routerLink="/list" class="btn btn-secondary">List an Item</a>
+    <a *ngIf="!currentUser" routerLink="/register" class="btn btn-outline">Join ReWear</a>
+  </div>
+</div> 

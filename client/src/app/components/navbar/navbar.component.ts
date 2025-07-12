@@ -29,6 +29,7 @@ export class NavbarComponent implements OnInit, OnDestroy {
     private authService: AuthService
   ) {
     this.authSubscription = this.authService.currentUser$.subscribe(user => {
+      console.log('Navbar: User state changed:', user);
       this.currentUser = user;
     });
   }

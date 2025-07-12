@@ -48,7 +48,7 @@
 
     <div class="error" *ngIf="error">{{ error }}</div>
 
-          <button type="submit" [disabled]="form.invalid || isLoading">
+          <button type="submit" class="btn btn-primary" [disabled]="form.invalid || isLoading">
         <span *ngIf="!isLoading">Create Account</span>
         <span *ngIf="isLoading">Creating Account...</span>
       </button>

@@ -1,0 +1,16 @@
+{
+  "name": "ReWear - Sustainable Fashion Exchange",
+  "short_name": "ReWear",
+  "description": "Sustainable Fashion Exchange Platform",
+  "start_url": "/",
+  "display": "standalone",
+  "background_color": "#ffffff",
+  "theme_color": "#4CAF50",
+  "icons": [
+    {
+      "src": "/favicon.svg",
+      "sizes": "any",
+      "type": "image/svg+xml"
+    }
+  ]
+} 

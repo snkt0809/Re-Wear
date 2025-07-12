@@ -4,6 +4,7 @@ import { FormBuilder, FormGroup, Validators, ReactiveFormsModule } from '@angula
 import { Router, RouterModule } from '@angular/router';
 import { ApiService } from '../../services/api.service';
 import { AuthService } from '../../services/auth.service';
+import { ImageUploadService } from '../../services/image-upload.service';
 import { User } from '../../services/api.service';
 import { Subscription } from 'rxjs';
 
@@ -19,7 +20,6 @@ export class ListItemComponent implements OnInit, OnDestroy {
   selectedImages: File[] = [];
   imagePreviewUrls: string[] = [];
   isSubmitting = false;
-  showSuccessModal = false;
   currentUser: User | null = null;
   isAuthenticated = false;
   private authSubscription!: Subscription;
@@ -36,13 +36,12 @@ export class ListItemComponent implements OnInit, OnDestroy {
     'New with tags', 'Like new', 'Excellent', 'Good', 'Fair', 'Poor'
   ];
 
-
-
   constructor(
     private fb: FormBuilder,
     private router: Router,
     private apiService: ApiService,
-    private authService: AuthService
+    private authService: AuthService,
+    private imageUploadService: ImageUploadService
   ) {
     this.listItemForm = this.fb.group({
       title: ['', [Validators.required, Validators.minLength(3)]],
@@ -60,24 +59,9 @@ export class ListItemComponent implements OnInit, OnDestroy {
   }
 
   ngOnInit(): void {
-    // Check authentication
-    this.currentUser = this.authService.getCurrentUser();
-    this.isAuthenticated = this.authService.isLoggedIn();
-    
-    // If not authenticated, redirect to login
-    if (!this.isAuthenticated) {
-      this.router.navigate(['/login']);
-      return;
-    }
-    
-    // Subscribe to auth changes to handle dynamic authentication state
     this.authSubscription = this.authService.currentUser$.subscribe(user => {
       this.currentUser = user;
       this.isAuthenticated = !!user;
-      
-      if (!this.isAuthenticated) {
-        this.router.navigate(['/login']);
-      }
     });
   }
 
@@ -117,25 +101,42 @@ export class ListItemComponent implements OnInit, OnDestroy {
     if (this.listItemForm.valid && this.selectedImages.length > 0) {
       this.isSubmitting = true;
       
-      // Convert images to base64 URLs for API
-      const imageUrls = this.imagePreviewUrls;
-      
-      const itemData = {
-        ...this.listItemForm.value,
-        imageUrls: imageUrls,
-        tags: this.listItemForm.value.tags ? this.listItemForm.value.tags.split(',').map((tag: string) => tag.trim()) : []
-      };
-      
-      this.apiService.createItem(itemData).subscribe({
-        next: (response) => {
-          console.log('Item created successfully:', response);
-          this.isSubmitting = false;
-          this.showSuccessModal = true;
+      // First upload images to ImgBB to get public URLs
+      this.imageUploadService.uploadImages(this.selectedImages).subscribe({
+        next: (imageUrls: string[]) => {
+          console.log('Images uploaded successfully:', imageUrls);
+          
+          // Now create the item with the public image URLs
+          const itemData = {
+            ...this.listItemForm.value,
+            imageUrls: imageUrls,
+            tags: this.listItemForm.value.tags ? this.listItemForm.value.tags.split(',').map((tag: string) => tag.trim()) : []
+          };
+          
+          this.apiService.createItem(itemData).subscribe({
+            next: (response) => {
+              console.log('Item created successfully:', response);
+              this.isSubmitting = false;
+              
+              // Navigate to browse page with success message
+              this.router.navigate(['/browse'], { 
+                queryParams: { 
+                  success: 'true',
+                  message: 'Item listed successfully! Your item has been added to the ReWear community.'
+                }
+              });
+            },
+            error: (error) => {
+              console.error('Error creating item:', error);
+              this.isSubmitting = false;
+              // Handle error (show error message)
+            }
+          });
         },
         error: (error) => {
-          console.error('Error creating item:', error);
+          console.error('Error uploading images:', error);
           this.isSubmitting = false;
-          // Handle error (show error message)
+          // Handle image upload error
         }
       });
     } else {
@@ -147,29 +148,25 @@ export class ListItemComponent implements OnInit, OnDestroy {
     }
   }
 
-  closeSuccessModal(): void {
-    this.showSuccessModal = false;
-    this.router.navigate(['/dashboard']);
+  // Form validation helpers
+  isFieldInvalid(fieldName: string): boolean {
+    const field = this.listItemForm.get(fieldName);
+    return !!(field && field.invalid && (field.dirty || field.touched));
   }
 
-  getErrorMessage(controlName: string): string {
-    const control = this.listItemForm.get(controlName);
-    if (control?.errors && control.touched) {
-      if (control.errors['required']) {
-        return `${controlName.charAt(0).toUpperCase() + controlName.slice(1)} is required`;
+  getErrorMessage(fieldName: string): string {
+    const field = this.listItemForm.get(fieldName);
+    if (field && field.errors) {
+      if (field.errors['required']) {
+        return `${fieldName.charAt(0).toUpperCase() + fieldName.slice(1)} is required`;
       }
-      if (control.errors['minlength']) {
-        return `${controlName.charAt(0).toUpperCase() + controlName.slice(1)} must be at least ${control.errors['minlength'].requiredLength} characters`;
+      if (field.errors['minlength']) {
+        return `${fieldName.charAt(0).toUpperCase() + fieldName.slice(1)} must be at least ${field.errors['minlength'].requiredLength} characters`;
       }
-      if (control.errors['min']) {
-        return `${controlName.charAt(0).toUpperCase() + controlName.slice(1)} must be at least ${control.errors['min'].min}`;
+      if (field.errors['min']) {
+        return `${fieldName.charAt(0).toUpperCase() + fieldName.slice(1)} must be at least ${field.errors['min'].min}`;
       }
     }
     return '';
-  }
-
-  isFieldInvalid(fieldName: string): boolean {
-    const field = this.listItemForm.get(fieldName);
-    return !!(field?.invalid && field?.touched);
   }
 } 
