@@ -19,15 +19,14 @@ cloth-reuse-platform/
 ### 👤 Users
 - Browse and request available clothing
 - Donate clothes via an easy form
-- Chatbot for instant FAQ answers and product recommendations
+- Chatbot for instant FAQ answers
 
 ### 👮 Admin
 - Manage donations, users, and products
 - View analytics or approval queues *(optional features)*
 
 ### 💬 Chatbot
-- FAQs: Answers to common questions like donation process, pickup, eligibility
-- Product Recommendations: Suggests clothing based on category, color, size
+- FAQs: Answers to common questions like donation process, pickup, eligibility, swapping
 
 ---
 
@@ -88,6 +87,21 @@ ng serve --port 4300
 ```
 
 
+## 📌 TODO (Optional Enhancements)
+
+- OpenAI-based chatbot understanding
+
+- Admin analytics dashboard
+
+- Email or SMS notifications
+
+- Role-based access control
+
+- Product image uploads via cloud storage
+
+
+## 🤝 Contributing
+Pull requests are welcome! For major changes, please open an issue first to discuss what you’d like to change.
 
 
 
