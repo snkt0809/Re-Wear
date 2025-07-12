@@ -12,18 +12,23 @@ const clothesSchema = new mongoose.Schema({
   },
   category: {
     type: String,
-    enum: ['Men', 'Women', 'Kids', 'Unisex', 'Other'],
+    enum: ['Tops', 'Bottoms', 'Dresses', 'Outerwear', 'Shoes', 'Accessories', 'Bags', 'Jewelry'],
     required: true
   },
   size: {
     type: String,
-    enum: ['XS', 'S', 'M', 'L', 'XL', 'XXL', 'Free Size', 'Other'],
+    enum: ['XS', 'S', 'M', 'L', 'XL', 'XXL', 'One Size', 'Custom'],
     required: true
   },
   condition: {
     type: String,
-    enum: ['Like New', 'Good', 'Worn', 'Needs Repair'],
+    enum: ['New with tags', 'Like new', 'Excellent', 'Good', 'Fair', 'Poor'],
     default: 'Good'
+  },
+  points: {
+    type: Number,
+    default: 10,
+    min: 0
   },
   imageUrls: [{
     type: String,
@@ -33,6 +38,11 @@ const clothesSchema = new mongoose.Schema({
     type: mongoose.Schema.Types.ObjectId,
     ref: 'User',
     required: true
+  },
+  ownerId: {
+    type: mongoose.Schema.Types.ObjectId,
+    ref: 'User',
+    default: function() { return this.donorId; }
   },
   location: {
     type: String,
@@ -45,6 +55,27 @@ const clothesSchema = new mongoose.Schema({
   approved: {
     type: Boolean,
     default: false
+  },
+  // Additional fields from frontend
+  points: {
+    type: Number,
+    default: 50
+  },
+  tags: [{
+    type: String,
+    trim: true
+  }],
+  brand: {
+    type: String,
+    trim: true
+  },
+  color: {
+    type: String,
+    trim: true
+  },
+  material: {
+    type: String,
+    trim: true
   }
 }, {
   timestamps: true

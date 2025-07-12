@@ -1,8 +1,9 @@
-import { CommonModule } from '@angular/common';
-import { Component, OnInit } from '@angular/core';
+import { CommonModule, isPlatformBrowser } from '@angular/common';
+import { Component, OnInit, Inject, PLATFORM_ID, OnDestroy } from '@angular/core';
 import { RouterModule } from '@angular/router';
 import { AuthService } from '../../services/auth.service';
 import { ApiService, User, Item, Swap } from '../../services/api.service';
+import { Subscription } from 'rxjs';
 
 // Remove local interfaces - using API service interfaces instead
 
@@ -16,53 +17,95 @@ import { ApiService, User, Item, Swap } from '../../services/api.service';
     RouterModule
   ]
 })
-export class DashboardComponent implements OnInit {
+export class DashboardComponent implements OnInit, OnDestroy {
   userProfile: User | null = null;
   userItems: Item[] = [];
   swaps: Swap[] = [];
+  recentActivity: any[] = [];
   isLoading = true;
-
-  // Remove hardcoded userItems array
-
-  // Remove hardcoded swaps array
-
   activeTab = 'overview';
+  private authSubscription: Subscription;
 
   constructor(
+    @Inject(PLATFORM_ID) private platformId: Object,
     private authService: AuthService,
     private apiService: ApiService
-  ) {}
+  ) {
+    // Subscribe to auth state changes
+    this.authSubscription = this.authService.currentUser$.subscribe(user => {
+      this.userProfile = user;
+      if (user) {
+        this.loadUserData();
+      } else {
+        this.isLoading = false;
+      }
+    });
+  }
 
   ngOnInit(): void {
-    this.loadUserData();
+    // Initial load - check if user is already logged in
+    const currentUser = this.authService.getCurrentUser();
+    
+    if (currentUser) {
+      this.userProfile = currentUser;
+      this.loadUserData();
+    } else {
+      this.isLoading = false;
+    }
+  }
+
+  ngOnDestroy(): void {
+    if (this.authSubscription) {
+      this.authSubscription.unsubscribe();
+    }
   }
 
   private loadUserData(): void {
-    // Get current user
-    this.userProfile = this.authService.getCurrentUser();
-    
     if (this.userProfile) {
-      // Load user's items and swaps
-      this.loadUserItems();
-      this.loadUserSwaps();
+      // Ensure default values for user profile
+      this.userProfile = {
+        ...this.userProfile,
+        swapsCompleted: this.userProfile.swapsCompleted || 0,
+        points: this.userProfile.points || 0
+      };
+      
+      // Only load data in browser environment
+      if (isPlatformBrowser(this.platformId)) {
+        // Load user's items and swaps
+        this.loadUserItems();
+        this.loadUserSwaps();
+        this.generateRecentActivity();
+      }
     }
     
     this.isLoading = false;
   }
 
   private loadUserItems(): void {
-    // For now, we'll load all items and filter by uploader
-    // In a real app, you'd have a specific endpoint for user's items
-    this.apiService.getAllItems().subscribe({
+    this.apiService.getUserItems().subscribe({
       next: (items: Item[]) => {
-        // Filter items by current user (this is a temporary solution)
-        // In production, you'd have a dedicated endpoint for user's items
-        this.userItems = items.filter(item => 
-          item.uploader.id === this.userProfile?.id
-        );
+        this.userItems = items;
+        this.generateRecentActivity();
       },
       error: (error) => {
         console.error('Error loading user items:', error);
+        // Fallback to filtering all items if the endpoint doesn't exist
+        this.loadUserItemsFallback();
+      }
+    });
+  }
+
+  private loadUserItemsFallback(): void {
+    // Fallback method - load all items and filter by current user
+    this.apiService.getAllItems().subscribe({
+      next: (items: Item[]) => {
+        this.userItems = items.filter(item => 
+          item.uploader.id === this.userProfile?.id
+        );
+        this.generateRecentActivity();
+      },
+      error: (error) => {
+        console.error('Error loading user items (fallback):', error);
       }
     });
   }
@@ -71,6 +114,7 @@ export class DashboardComponent implements OnInit {
     this.apiService.getMySwaps().subscribe({
       next: (swaps: Swap[]) => {
         this.swaps = swaps;
+        this.generateRecentActivity();
       },
       error: (error) => {
         console.error('Error loading user swaps:', error);
@@ -112,6 +156,7 @@ export class DashboardComponent implements OnInit {
       next: (swap) => {
         console.log('Swap approved:', swap);
         this.loadUserSwaps(); // Reload swaps
+        this.generateRecentActivity(); // Refresh activity
       },
       error: (error) => {
         console.error('Error approving swap:', error);
@@ -124,6 +169,7 @@ export class DashboardComponent implements OnInit {
       next: (swap) => {
         console.log('Swap rejected:', swap);
         this.loadUserSwaps(); // Reload swaps
+        this.generateRecentActivity(); // Refresh activity
       },
       error: (error) => {
         console.error('Error rejecting swap:', error);
@@ -134,5 +180,59 @@ export class DashboardComponent implements OnInit {
   completeSwap(swapId: string): void {
     // Handle swap completion - you might need to add this endpoint to your API
     console.log('Completing swap:', swapId);
+  }
+
+  private generateRecentActivity(): void {
+    const activities: any[] = [];
+
+    // Add recent swaps
+    this.swaps.slice(0, 3).forEach(swap => {
+      const isIncoming = this.getSwapType(swap) === 'incoming';
+      const otherUser = this.getOtherUser(swap);
+      
+      activities.push({
+        type: 'swap',
+        icon: isIncoming ? '🔄' : '📤',
+        title: isIncoming 
+          ? `Swap request received for "${swap.product1.title}"`
+          : `Swap request sent for "${swap.product1.title}"`,
+        description: `with ${otherUser.name}`,
+        time: this.getTimeAgo(swap.createdAt),
+        status: swap.status
+      });
+    });
+
+    // Add recent items
+    this.userItems.slice(0, 2).forEach(item => {
+      activities.push({
+        type: 'item',
+        icon: '📦',
+        title: `New item listed: "${item.title}"`,
+        description: `${item.category} • ${item.points} points`,
+        time: this.getTimeAgo(item.createdAt),
+        status: item.availability
+      });
+    });
+
+    // Sort by date (most recent first) and take top 5
+    this.recentActivity = activities
+      .sort((a, b) => new Date(b.time).getTime() - new Date(a.time).getTime())
+      .slice(0, 5);
+  }
+
+  private getTimeAgo(dateString: string): string {
+    const date = new Date(dateString);
+    const now = new Date();
+    const diffInMs = now.getTime() - date.getTime();
+    const diffInHours = Math.floor(diffInMs / (1000 * 60 * 60));
+    const diffInDays = Math.floor(diffInHours / 24);
+
+    if (diffInDays > 0) {
+      return `${diffInDays} day${diffInDays > 1 ? 's' : ''} ago`;
+    } else if (diffInHours > 0) {
+      return `${diffInHours} hour${diffInHours > 1 ? 's' : ''} ago`;
+    } else {
+      return 'Just now';
+    }
   }
 } 
