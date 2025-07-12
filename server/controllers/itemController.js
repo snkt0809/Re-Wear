@@ -79,3 +79,31 @@ exports.getItemById = async (req, res) => {
     res.status(500).json({ message: 'Server error', error: error.message });
   }
 };
+
+// @desc    Get all clothing items with optional filters
+// @route   GET /api/items/clothes
+// @access  Public
+exports.getAllClothes = async (req, res) => {
+  try {
+    const { name, category, size, condition } = req.query;
+    const filter = {};
+
+    if (name) {
+      filter.title = { $regex: name, $options: 'i' }; // case-insensitive search
+    }
+    if (category) {
+      filter.category = category;
+    }
+    if (size) {
+      filter.size = size;
+    }
+    if (condition) {
+      filter.condition = condition;
+    }
+
+    const items = await Clothes.find(filter).populate('donorId', 'name');
+    res.json(items);
+  } catch (error) {
+    res.status(500).json({ message: 'Server error', error: error.message });
+  }
+};

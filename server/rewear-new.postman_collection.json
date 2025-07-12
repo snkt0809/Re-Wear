@@ -247,6 +247,25 @@
                             ]
                         }
                     }
+                },
+                {
+                    "name": "Get All Clothes (with Filters)",
+                    "request": {
+                        "method": "GET",
+                        "url": {
+                            "raw": "http://localhost:8000/api/items/clothes?name={{name}}&category={{category}}&size={{size}}&condition={{condition}}",
+                            "protocol": "http",
+                            "host": ["localhost"],
+                            "port": "8000",
+                            "path": ["api", "items", "clothes"],
+                            "query": [
+                                { "key": "name", "value": "{{name}}", "disabled": true },
+                                { "key": "category", "value": "{{category}}", "disabled": true },
+                                { "key": "size", "value": "{{size}}", "disabled": true },
+                                { "key": "condition", "value": "{{condition}}", "disabled": true }
+                            ]
+                        }
+                    }
                 }
             ]
         },
