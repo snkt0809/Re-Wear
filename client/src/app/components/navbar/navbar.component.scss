@@ -10,7 +10,7 @@
 }
 
 .dark {
-  --navbar-bg: #1a1a1a;
+  --navbar-bg: rgba(26, 26, 26, 0.95);
   --navbar-text: #ffffff;
   --navbar-border: #333333;
   --navbar-hover: #2a2a2a;
@@ -19,7 +19,8 @@
 }
 
 .navbar {
-  background-color: var(--navbar-bg);
+  background-color: rgba(255, 255, 255, 0.95);
+  backdrop-filter: blur(10px);
   border-bottom: 1px solid var(--navbar-border);
   box-shadow: var(--navbar-shadow);
   position: sticky;
