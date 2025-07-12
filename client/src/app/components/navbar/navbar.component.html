@@ -1,0 +1,129 @@
+<nav class="navbar" [class.dark]="isDarkMode">
+  <div class="navbar-container">
+    <!-- Logo and Brand -->
+    <div class="navbar-brand">
+      <a routerLink="/" class="brand-link">
+        <div class="logo">
+          <svg width="32" height="32" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <path d="M12 2L13.09 8.26L20 9L13.09 9.74L12 16L10.91 9.74L4 9L10.91 8.26L12 2Z" fill="currentColor"/>
+            <path d="M19 15L19.5 17L22 17.5L19.5 18L19 20L18.5 18L16 17.5L18.5 17L19 15Z" fill="currentColor"/>
+            <path d="M5 15L5.5 17L8 17.5L5.5 18L5 20L4.5 18L2 17.5L4.5 17L5 15Z" fill="currentColor"/>
+          </svg>
+        </div>
+        <span class="brand-name">Re-Wear</span>
+      </a>
+    </div>
+
+    <!-- Desktop Navigation -->
+    <div class="navbar-nav desktop-nav">
+      <a routerLink="/" routerLinkActive="active" [routerLinkActiveOptions]="{exact: true}" class="nav-link">Home</a>
+      <a routerLink="/browse" routerLinkActive="active" class="nav-link">Browse</a>
+      <a routerLink="/swap" routerLinkActive="active" class="nav-link">Swap</a>
+      <a routerLink="/list" routerLinkActive="active" class="nav-link">List Item</a>
+      <a routerLink="/dashboard" routerLinkActive="active" class="nav-link">Dashboard</a>
+    </div>
+
+    <!-- Right side actions -->
+    <div class="navbar-actions">
+      <!-- Theme Toggle -->
+      <button 
+        class="theme-toggle" 
+        (click)="toggleTheme()" 
+        [attr.aria-label]="isDarkMode ? 'Switch to light mode' : 'Switch to dark mode'"
+        [title]="isDarkMode ? 'Switch to light mode' : 'Switch to dark mode'"
+      >
+        <svg *ngIf="!isDarkMode" class="theme-icon" width="20" height="20" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+          <path d="M12 3V4M12 20V21M4 12H3M6.31412 6.31412L5.5 5.5M17.6859 6.31412L18.5 5.5M6.31412 17.69L5.5 18.5001M17.6859 17.69L18.5 18.5001M21 12H20M16 12C16 14.2091 14.2091 16 12 16C9.79086 16 8 14.2091 8 12C8 9.79086 9.79086 8 12 8C14.2091 8 16 9.79086 16 12Z" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+        </svg>
+        <svg *ngIf="isDarkMode" class="theme-icon" width="20" height="20" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+          <path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79Z" fill="currentColor"/>
+        </svg>
+      </button>
+
+      <!-- User Actions -->
+      <div class="user-actions">
+        <a routerLink="/cart" class="action-link" title="Shopping Cart">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <path d="M3 3H5L5.4 5M7 13H17L21 5H5.4M7 13L5.4 5M7 13L4.7 15.3C4.3 15.7 4.6 16.5 5.1 16.5H17M17 13V17C17 18.1 16.1 19 15 19H9C7.9 19 7 18.1 7 17V13H17Z" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+          </svg>
+        </a>
+        
+        <!-- Show Login Button when not logged in -->
+        <a *ngIf="!currentUser" routerLink="/login" class="login-btn" title="Login">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <path d="M15 3H19C19.5304 3 20.0391 3.21071 20.4142 3.58579C20.7893 3.96086 21 4.46957 21 5V19C21 19.5304 20.7893 20.0391 20.4142 20.4142C20.0391 20.7893 19.5304 21 19 21H15" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+            <path d="M10 17L15 12L10 7" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+            <path d="M15 12H3" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+          </svg>
+          <span>Login</span>
+        </a>
+
+        <!-- Show User Menu when logged in -->
+        <div *ngIf="currentUser" class="user-menu">
+          <div class="user-info">
+            <div class="user-avatar">
+              <span>{{ currentUser.name.charAt(0) }}</span>
+            </div>
+            <div class="user-details">
+              <span class="user-name">{{ currentUser.name }}</span>
+              <span class="user-points">{{ currentUser.points }} points</span>
+            </div>
+          </div>
+          <div class="user-dropdown">
+            <a routerLink="/dashboard" class="dropdown-item">
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                <path d="M3 13H11V3H3V13ZM3 21H11V15H3V21ZM13 21H21V11H13V21ZM13 3V9H21V3H13Z" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+              </svg>
+              Dashboard
+            </a>
+            <a routerLink="/profile" class="dropdown-item">
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                <path d="M20 21V19C20 17.9391 19.5786 16.9217 18.8284 16.1716C18.0783 15.4214 17.0609 15 16 15H8C6.93913 15 5.92172 15.4214 5.17157 16.1716C4.42143 16.9217 4 17.9391 4 19V21" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                <path d="M12 11C14.2091 11 16 9.20914 16 7C16 4.79086 14.2091 3 12 3C9.79086 3 8 4.79086 8 7C8 9.20914 9.79086 11 12 11Z" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+              </svg>
+              Profile
+            </a>
+            <button (click)="logout()" class="dropdown-item logout-btn">
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                <path d="M9 21H5C4.46957 21 3.96086 20.7893 3.58579 20.4142C3.21071 20.0391 3 19.5304 3 19V5C3 4.46957 3.21071 3.96086 3.58579 3.58579C3.96086 3.21071 4.46957 3 5 3H9" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                <path d="M16 17L21 12L16 7" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                <path d="M21 12H9" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+              </svg>
+              Logout
+            </button>
+          </div>
+        </div>
+      </div>
+
+      <!-- Mobile Menu Button -->
+      <button 
+        class="mobile-menu-btn" 
+        (click)="toggleMenu()" 
+        [class.active]="isMenuOpen"
+        aria-label="Toggle navigation menu"
+      >
+        <span></span>
+        <span></span>
+        <span></span>
+      </button>
+    </div>
+  </div>
+
+  <!-- Mobile Navigation -->
+  <div class="mobile-nav" [class.active]="isMenuOpen">
+    <a routerLink="/" routerLinkActive="active" [routerLinkActiveOptions]="{exact: true}" class="mobile-nav-link" (click)="closeMenu()">Home</a>
+    <a routerLink="/browse" routerLinkActive="active" class="mobile-nav-link" (click)="closeMenu()">Browse</a>
+    <a routerLink="/swap" routerLinkActive="active" class="mobile-nav-link" (click)="closeMenu()">Swap</a>
+    <a routerLink="/list" routerLinkActive="active" class="mobile-nav-link" (click)="closeMenu()">List Item</a>
+    <a routerLink="/cart" class="mobile-nav-link" (click)="closeMenu()">Cart</a>
+    
+    <!-- Show Dashboard when logged in -->
+    <a *ngIf="currentUser" routerLink="/dashboard" routerLinkActive="active" class="mobile-nav-link" (click)="closeMenu()">Dashboard</a>
+    
+    <!-- Show Login when not logged in -->
+    <a *ngIf="!currentUser" routerLink="/login" class="mobile-nav-link" (click)="closeMenu()">Login</a>
+    
+    <!-- Show Logout when logged in -->
+    <button *ngIf="currentUser" (click)="logout(); closeMenu()" class="mobile-nav-link logout-mobile">Logout</button>
+  </div>
+</nav> 

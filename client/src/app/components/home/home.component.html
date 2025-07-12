@@ -1,0 +1,109 @@
+<div class="home-container">
+  <div class="hero-section">
+    <h1>Welcome to ReWear</h1>
+    <p class="hero-subtitle">Sustainable Fashion Exchange Platform</p>
+    <p class="hero-description">
+      Exchange unused clothing through direct swaps or point-based redemption. Give fashion a second life while reducing textile waste and promoting sustainable fashion.
+    </p>
+    <div class="cta-buttons">
+      <a routerLink="/swap" class="btn btn-primary">Start Swapping</a>
+      <a routerLink="/browse" class="btn btn-secondary">Browse Items</a>
+      <a routerLink="/list" class="btn btn-outline">List an Item</a>
+    </div>
+  </div>
+
+  <!-- Featured Items Carousel -->
+  <div class="carousel-section">
+    <h2>Featured Items</h2>
+    <div class="carousel-container">
+      <button class="carousel-btn prev" (click)="previousSlide()">
+        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+          <path d="M15 18L9 12L15 6" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+        </svg>
+      </button>
+      
+      <div class="carousel-track" [style.transform]="'translateX(' + currentSlide * -100 + '%)'">
+        <div class="carousel-slide" *ngFor="let item of featuredItems; let i = index">
+          <div class="item-card">
+            <div class="item-image">
+              <img [src]="item.image" [alt]="item.title">
+              <div class="item-badge" [class]="item.type">{{ item.type }}</div>
+            </div>
+            <div class="item-info">
+              <h3>{{ item.title }}</h3>
+              <p class="item-category">{{ item.category }}</p>
+              <p class="item-size">Size: {{ item.size }}</p>
+              <div class="item-actions">
+                <span class="points">{{ item.points }} points</span>
+                <button class="btn btn-sm btn-primary">Swap Request</button>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <button class="carousel-btn next" (click)="nextSlide()">
+        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+          <path d="M9 18L15 12L9 6" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+        </svg>
+      </button>
+    </div>
+    
+    <div class="carousel-indicators">
+      <button 
+        *ngFor="let item of featuredItems; let i = index" 
+        class="indicator" 
+        [class.active]="i === currentSlide"
+        (click)="goToSlide(i)">
+      </button>
+    </div>
+  </div>
+
+  <div class="features-section">
+    <h2>Why Choose ReWear?</h2>
+    <div class="features-grid">
+      <div class="feature-card">
+        <div class="feature-icon">🌱</div>
+        <h3>Sustainable Fashion</h3>
+        <p>Reduce textile waste and promote circular fashion by giving clothes a second life.</p>
+      </div>
+      <div class="feature-card">
+        <div class="feature-icon">🔄</div>
+        <h3>Direct Swaps</h3>
+        <p>Exchange items directly with other users or use our point-based redemption system.</p>
+      </div>
+      <div class="feature-card">
+        <div class="feature-icon">💚</div>
+        <h3>Eco-Friendly</h3>
+        <p>Join the movement towards sustainable fashion and reduce your environmental impact.</p>
+      </div>
+      <div class="feature-card">
+        <div class="feature-icon">🛡️</div>
+        <h3>Verified Community</h3>
+        <p>Safe and trusted platform with moderated listings and verified users.</p>
+      </div>
+    </div>
+  </div>
+
+  <div class="stats-section">
+    <h2>Our Impact</h2>
+    <div class="stats-grid">
+      <div class="stat-card">
+        <div class="stat-number">1,247</div>
+        <div class="stat-label">Items Swapped</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-number">856</div>
+        <div class="stat-label">Active Users</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-number">2.3k</div>
+        <div class="stat-label">Pounds of Waste Saved</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-number">98%</div>
+        <div class="stat-label">User Satisfaction</div>
+      </div>
+    </div>
+  </div>
+</div> 

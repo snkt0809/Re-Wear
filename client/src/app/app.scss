@@ -1,0 +1,28 @@
+// Main content styling
+.main-content {
+  min-height: calc(100vh - 70px); // Subtract navbar height
+  padding: 2rem 1rem;
+  max-width: 1200px;
+  margin: 0 auto;
+}
+
+// Global styles for dark/light mode
+:root {
+  --bg-color: #ffffff;
+  --text-color: #333333;
+  --border-color: #e5e5e5;
+}
+
+.dark {
+  --bg-color: #121212;
+  --text-color: #ffffff;
+  --border-color: #333333;
+}
+
+body {
+  background-color: var(--bg-color);
+  color: var(--text-color);
+  transition: background-color 0.3s ease, color 0.3s ease;
+  margin: 0;
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+}
