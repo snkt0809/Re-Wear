@@ -1,25 +1,10 @@
 import { CommonModule } from '@angular/common';
 import { Component, OnInit } from '@angular/core';
 import { RouterModule } from '@angular/router';
+import { AuthService } from '../../services/auth.service';
+import { ApiService, User, Item, Swap } from '../../services/api.service';
 
-interface UserItem {
-  id: number;
-  title: string;
-  category: string;
-  status: 'active' | 'pending' | 'swapped';
-  image: string;
-  points: number;
-  createdAt: Date;
-}
-
-interface Swap {
-  id: number;
-  itemTitle: string;
-  otherUser: string;
-  status: 'pending' | 'accepted' | 'completed' | 'rejected';
-  type: 'incoming' | 'outgoing';
-  createdAt: Date;
-}
+// Remove local interfaces - using API service interfaces instead
 
 @Component({
   selector: 'app-dashboard',
@@ -32,76 +17,65 @@ interface Swap {
   ]
 })
 export class DashboardComponent implements OnInit {
-  userProfile = {
-    name: 'Sarah Johnson',
-    email: 'sarah.johnson@email.com',
-    points: 1250,
-    itemsListed: 8,
-    swapsCompleted: 12,
-    memberSince: new Date('2023-01-15')
-  };
+  userProfile: User | null = null;
+  userItems: Item[] = [];
+  swaps: Swap[] = [];
+  isLoading = true;
 
-  userItems: UserItem[] = [
-    {
-      id: 1,
-      title: 'Vintage Denim Jacket',
-      category: 'Outerwear',
-      status: 'active',
-      image: 'https://images.unsplash.com/photo-1576995853123-5a10305d93c0?w=300&h=300&fit=crop',
-      points: 150,
-      createdAt: new Date('2024-01-15')
-    },
-    {
-      id: 2,
-      title: 'Organic Cotton T-Shirt',
-      category: 'Tops',
-      status: 'pending',
-      image: 'https://images.unsplash.com/photo-1521572163474-6864f9cf17ab?w=300&h=300&fit=crop',
-      points: 80,
-      createdAt: new Date('2024-01-20')
-    },
-    {
-      id: 3,
-      title: 'Sustainable Wool Sweater',
-      category: 'Sweaters',
-      status: 'swapped',
-      image: 'https://images.unsplash.com/photo-1434389677669-e08b4cac3105?w=300&h=300&fit=crop',
-      points: 200,
-      createdAt: new Date('2024-01-10')
-    }
-  ];
+  // Remove hardcoded userItems array
 
-  swaps: Swap[] = [
-    {
-      id: 1,
-      itemTitle: 'Vintage Denim Jacket',
-      otherUser: 'Mike Chen',
-      status: 'pending',
-      type: 'incoming',
-      createdAt: new Date('2024-01-22')
-    },
-    {
-      id: 2,
-      itemTitle: 'Eco-Friendly Jeans',
-      otherUser: 'Lisa Park',
-      status: 'accepted',
-      type: 'outgoing',
-      createdAt: new Date('2024-01-18')
-    },
-    {
-      id: 3,
-      itemTitle: 'Sustainable Wool Sweater',
-      otherUser: 'David Kim',
-      status: 'completed',
-      type: 'outgoing',
-      createdAt: new Date('2024-01-10')
-    }
-  ];
+  // Remove hardcoded swaps array
 
   activeTab = 'overview';
 
+  constructor(
+    private authService: AuthService,
+    private apiService: ApiService
+  ) {}
+
   ngOnInit(): void {
-    // Load user data from service
+    this.loadUserData();
+  }
+
+  private loadUserData(): void {
+    // Get current user
+    this.userProfile = this.authService.getCurrentUser();
+    
+    if (this.userProfile) {
+      // Load user's items and swaps
+      this.loadUserItems();
+      this.loadUserSwaps();
+    }
+    
+    this.isLoading = false;
+  }
+
+  private loadUserItems(): void {
+    // For now, we'll load all items and filter by uploader
+    // In a real app, you'd have a specific endpoint for user's items
+    this.apiService.getAllItems().subscribe({
+      next: (items: Item[]) => {
+        // Filter items by current user (this is a temporary solution)
+        // In production, you'd have a dedicated endpoint for user's items
+        this.userItems = items.filter(item => 
+          item.uploader.id === this.userProfile?.id
+        );
+      },
+      error: (error) => {
+        console.error('Error loading user items:', error);
+      }
+    });
+  }
+
+  private loadUserSwaps(): void {
+    this.apiService.getMySwaps().subscribe({
+      next: (swaps: Swap[]) => {
+        this.swaps = swaps;
+      },
+      error: (error) => {
+        console.error('Error loading user swaps:', error);
+      }
+    });
   }
 
   setActiveTab(tab: string): void {
@@ -110,12 +84,11 @@ export class DashboardComponent implements OnInit {
 
   getStatusColor(status: string): string {
     switch (status) {
-      case 'active': return '#4CAF50';
+      case 'available': return '#4CAF50';
       case 'pending': return '#FF9800';
-      case 'swapped': return '#2196F3';
-      case 'accepted': return '#4CAF50';
-      case 'completed': return '#4CAF50';
+      case 'approved': return '#4CAF50';
       case 'rejected': return '#F44336';
+      case 'sold': return '#2196F3';
       default: return '#666';
     }
   }
@@ -124,18 +97,42 @@ export class DashboardComponent implements OnInit {
     return status.charAt(0).toUpperCase() + status.slice(1);
   }
 
-  acceptSwap(swapId: number): void {
-    // Handle swap acceptance
-    console.log('Accepting swap:', swapId);
+  getSwapType(swap: Swap): 'incoming' | 'outgoing' {
+    const currentUserId = this.userProfile?.id;
+    return swap.initiator.id === currentUserId ? 'outgoing' : 'incoming';
   }
 
-  rejectSwap(swapId: number): void {
-    // Handle swap rejection
-    console.log('Rejecting swap:', swapId);
+  getOtherUser(swap: Swap): User {
+    const currentUserId = this.userProfile?.id;
+    return swap.initiator.id === currentUserId ? swap.recipient : swap.initiator;
   }
 
-  completeSwap(swapId: number): void {
-    // Handle swap completion
+  acceptSwap(swapId: string): void {
+    this.apiService.approveSwap(swapId).subscribe({
+      next: (swap) => {
+        console.log('Swap approved:', swap);
+        this.loadUserSwaps(); // Reload swaps
+      },
+      error: (error) => {
+        console.error('Error approving swap:', error);
+      }
+    });
+  }
+
+  rejectSwap(swapId: string): void {
+    this.apiService.rejectSwap(swapId).subscribe({
+      next: (swap) => {
+        console.log('Swap rejected:', swap);
+        this.loadUserSwaps(); // Reload swaps
+      },
+      error: (error) => {
+        console.error('Error rejecting swap:', error);
+      }
+    });
+  }
+
+  completeSwap(swapId: string): void {
+    // Handle swap completion - you might need to add this endpoint to your API
     console.log('Completing swap:', swapId);
   }
 } 

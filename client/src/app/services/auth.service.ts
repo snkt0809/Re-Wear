@@ -1,13 +1,7 @@
 import { Injectable } from '@angular/core';
 import { BehaviorSubject, Observable } from 'rxjs';
-
-export interface User {
-  id: number;
-  name: string;
-  email: string;
-  points: number;
-  memberSince: Date;
-}
+import { tap } from 'rxjs/operators';
+import { ApiService, User } from './api.service';
 
 @Injectable({
   providedIn: 'root'
@@ -16,7 +10,7 @@ export class AuthService {
   private currentUserSubject = new BehaviorSubject<User | null>(null);
   public currentUser$ = this.currentUserSubject.asObservable();
 
-  constructor() {
+  constructor(private apiService: ApiService) {
     // Check if user is logged in from localStorage
     this.checkStoredUser();
   }
@@ -44,53 +38,94 @@ export class AuthService {
     return this.currentUserSubject.value !== null;
   }
 
-  login(email: string, password: string): Observable<boolean> {
-    // Mock login - in real app, this would make an API call
-    return new Observable(observer => {
-      setTimeout(() => {
-        // Simulate successful login
-        const mockUser: User = {
-          id: 1,
-          name: 'Sarah Johnson',
-          email: email,
-          points: 1250,
-          memberSince: new Date('2023-01-15')
-        };
-
-        this.currentUserSubject.next(mockUser);
-        
+  private loadCurrentUser(): void {
+    this.apiService.getCurrentUser().subscribe({
+      next: (user: User) => {
+        this.currentUserSubject.next(user);
         if (typeof window !== 'undefined') {
-          localStorage.setItem('currentUser', JSON.stringify(mockUser));
+          localStorage.setItem('currentUser', JSON.stringify(user));
         }
-        
-        observer.next(true);
-        observer.complete();
-      }, 1000); // Simulate network delay
+      },
+      error: (error) => {
+        console.error('Error loading current user:', error);
+        this.logout();
+      }
+    });
+  }
+
+  login(email: string, password: string): Observable<boolean> {
+    return new Observable(observer => {
+      this.apiService.login({ email, password }).subscribe({
+        next: (response: any) => {
+          if (response.token) {
+            localStorage.setItem('token', response.token);
+            // Load current user and wait for it to complete
+            this.apiService.getCurrentUser().subscribe({
+              next: (user: User) => {
+                this.currentUserSubject.next(user);
+                if (typeof window !== 'undefined') {
+                  localStorage.setItem('currentUser', JSON.stringify(user));
+                }
+                observer.next(true);
+                observer.complete();
+              },
+              error: (error) => {
+                console.error('Error loading current user:', error);
+                observer.next(false);
+                observer.complete();
+              }
+            });
+          } else {
+            observer.next(false);
+            observer.complete();
+          }
+        },
+        error: (error) => {
+          console.error('Login error:', error);
+          observer.next(false);
+          observer.complete();
+        }
+      });
     });
   }
 
   register(userData: any): Observable<boolean> {
-    // Mock registration - in real app, this would make an API call
     return new Observable(observer => {
-      setTimeout(() => {
-        // Simulate successful registration
-        const mockUser: User = {
-          id: 2,
-          name: `${userData.firstName} ${userData.lastName}`,
-          email: userData.email,
-          points: 100, // Starting points
-          memberSince: new Date()
-        };
-
-        this.currentUserSubject.next(mockUser);
-        
-        if (typeof window !== 'undefined') {
-          localStorage.setItem('currentUser', JSON.stringify(mockUser));
+      this.apiService.register({
+        name: userData.name,
+        email: userData.email,
+        password: userData.password
+      }).subscribe({
+        next: (response: any) => {
+          if (response.token) {
+            localStorage.setItem('token', response.token);
+            // Load current user and wait for it to complete
+            this.apiService.getCurrentUser().subscribe({
+              next: (user: User) => {
+                this.currentUserSubject.next(user);
+                if (typeof window !== 'undefined') {
+                  localStorage.setItem('currentUser', JSON.stringify(user));
+                }
+                observer.next(true);
+                observer.complete();
+              },
+              error: (error) => {
+                console.error('Error loading current user:', error);
+                observer.next(false);
+                observer.complete();
+              }
+            });
+          } else {
+            observer.next(false);
+            observer.complete();
+          }
+        },
+        error: (error) => {
+          console.error('Registration error:', error);
+          observer.next(false);
+          observer.complete();
         }
-        
-        observer.next(true);
-        observer.complete();
-      }, 1000); // Simulate network delay
+      });
     });
   }
 
@@ -98,6 +133,7 @@ export class AuthService {
     this.currentUserSubject.next(null);
     if (typeof window !== 'undefined') {
       localStorage.removeItem('currentUser');
+      localStorage.removeItem('token');
     }
   }
 

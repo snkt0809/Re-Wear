@@ -1,7 +1,11 @@
 import { CommonModule } from '@angular/common';
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, OnDestroy } from '@angular/core';
 import { FormBuilder, FormGroup, Validators, ReactiveFormsModule } from '@angular/forms';
 import { Router, RouterModule } from '@angular/router';
+import { ApiService } from '../../services/api.service';
+import { AuthService } from '../../services/auth.service';
+import { User } from '../../services/api.service';
+import { Subscription } from 'rxjs';
 
 @Component({
   selector: 'app-list-item',
@@ -10,12 +14,15 @@ import { Router, RouterModule } from '@angular/router';
   templateUrl: './list-item.component.html',
   styleUrls: ['./list-item.component.scss']
 })
-export class ListItemComponent implements OnInit {
+export class ListItemComponent implements OnInit, OnDestroy {
   listItemForm: FormGroup;
   selectedImages: File[] = [];
   imagePreviewUrls: string[] = [];
   isSubmitting = false;
   showSuccessModal = false;
+  currentUser: User | null = null;
+  isAuthenticated = false;
+  private authSubscription!: Subscription;
 
   categories = [
     'Tops', 'Bottoms', 'Dresses', 'Outerwear', 'Shoes', 'Accessories', 'Bags', 'Jewelry'
@@ -29,15 +36,13 @@ export class ListItemComponent implements OnInit {
     'New with tags', 'Like new', 'Excellent', 'Good', 'Fair', 'Poor'
   ];
 
-  types = [
-    { value: 'swap', label: 'Swap Only' },
-    { value: 'points', label: 'Points Redemption' },
-    { value: 'both', label: 'Both Options' }
-  ];
+
 
   constructor(
     private fb: FormBuilder,
-    private router: Router
+    private router: Router,
+    private apiService: ApiService,
+    private authService: AuthService
   ) {
     this.listItemForm = this.fb.group({
       title: ['', [Validators.required, Validators.minLength(3)]],
@@ -45,8 +50,7 @@ export class ListItemComponent implements OnInit {
       category: ['', Validators.required],
       size: ['', Validators.required],
       condition: ['', Validators.required],
-      type: ['swap', Validators.required],
-      points: [0, [Validators.min(0)]],
+      points: [50, [Validators.required, Validators.min(1)]],
       location: ['', Validators.required],
       tags: [''],
       brand: [''],
@@ -56,19 +60,31 @@ export class ListItemComponent implements OnInit {
   }
 
   ngOnInit(): void {
-    // Watch for type changes to show/hide points field
-    this.listItemForm.get('type')?.valueChanges.subscribe(type => {
-      const pointsControl = this.listItemForm.get('points');
-      if (type === 'swap') {
-        pointsControl?.setValue(0);
-        pointsControl?.disable();
-      } else {
-        pointsControl?.enable();
-        if (pointsControl?.value === 0) {
-          pointsControl?.setValue(50);
-        }
+    // Check authentication
+    this.currentUser = this.authService.getCurrentUser();
+    this.isAuthenticated = this.authService.isLoggedIn();
+    
+    // If not authenticated, redirect to login
+    if (!this.isAuthenticated) {
+      this.router.navigate(['/login']);
+      return;
+    }
+    
+    // Subscribe to auth changes to handle dynamic authentication state
+    this.authSubscription = this.authService.currentUser$.subscribe(user => {
+      this.currentUser = user;
+      this.isAuthenticated = !!user;
+      
+      if (!this.isAuthenticated) {
+        this.router.navigate(['/login']);
       }
     });
+  }
+
+  ngOnDestroy(): void {
+    if (this.authSubscription) {
+      this.authSubscription.unsubscribe();
+    }
   }
 
   onImageSelect(event: any): void {
@@ -101,14 +117,27 @@ export class ListItemComponent implements OnInit {
     if (this.listItemForm.valid && this.selectedImages.length > 0) {
       this.isSubmitting = true;
       
-      // Simulate API call
-      setTimeout(() => {
-        console.log('Form submitted:', this.listItemForm.value);
-        console.log('Images:', this.selectedImages);
-        
-        this.isSubmitting = false;
-        this.showSuccessModal = true;
-      }, 2000);
+      // Convert images to base64 URLs for API
+      const imageUrls = this.imagePreviewUrls;
+      
+      const itemData = {
+        ...this.listItemForm.value,
+        imageUrls: imageUrls,
+        tags: this.listItemForm.value.tags ? this.listItemForm.value.tags.split(',').map((tag: string) => tag.trim()) : []
+      };
+      
+      this.apiService.createItem(itemData).subscribe({
+        next: (response) => {
+          console.log('Item created successfully:', response);
+          this.isSubmitting = false;
+          this.showSuccessModal = true;
+        },
+        error: (error) => {
+          console.error('Error creating item:', error);
+          this.isSubmitting = false;
+          // Handle error (show error message)
+        }
+      });
     } else {
       // Mark all fields as touched to show validation errors
       Object.keys(this.listItemForm.controls).forEach(key => {

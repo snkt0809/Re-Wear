@@ -234,10 +234,16 @@
       overflow: hidden;
       flex-shrink: 0;
       
-      img {
+      .avatar-placeholder {
         width: 100%;
         height: 100%;
-        object-fit: cover;
+        background: #4CAF50;
+        color: white;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 1.5rem;
+        font-weight: 600;
       }
     }
     
@@ -383,6 +389,23 @@
   form {
     padding: 1.5rem;
     
+    .swap-info {
+      background: #f8f9fa;
+      padding: 1rem;
+      border-radius: 8px;
+      margin-bottom: 1.5rem;
+      border-left: 4px solid #4CAF50;
+      
+      p {
+        margin: 0.25rem 0;
+        color: #2c3e50;
+        
+        strong {
+          color: #4CAF50;
+        }
+      }
+    }
+    
     .form-group {
       margin-bottom: 1.5rem;
       
@@ -411,6 +434,14 @@
       textarea.form-control {
         resize: vertical;
         min-height: 100px;
+      }
+      
+      .form-help {
+        display: block;
+        margin-top: 0.5rem;
+        font-size: 0.875rem;
+        color: #6c757d;
+        font-style: italic;
       }
     }
     

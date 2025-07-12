@@ -1,4 +1,4 @@
-<div class="dashboard-container">
+<div class="dashboard-container" *ngIf="!isLoading && userProfile">
   <div class="dashboard-header">
     <h1>Dashboard</h1>
     <p>Welcome back, {{ userProfile.name }}!</p>
@@ -22,7 +22,7 @@
         <div class="stat-label">Points Balance</div>
       </div>
       <div class="stat">
-        <div class="stat-number">{{ userProfile.itemsListed }}</div>
+        <div class="stat-number">{{ userItems.length }}</div>
         <div class="stat-label">Items Listed</div>
       </div>
       <div class="stat">
@@ -114,9 +114,9 @@
     <div class="items-grid">
       <div class="item-card" *ngFor="let item of userItems">
         <div class="item-image">
-          <img [src]="item.image" [alt]="item.title">
-          <div class="item-status" [style.background-color]="getStatusColor(item.status)">
-            {{ getStatusText(item.status) }}
+          <img [src]="item.images[0]" [alt]="item.title">
+          <div class="item-status" [style.background-color]="getStatusColor(item.availability)">
+            {{ getStatusText(item.availability) }}
           </div>
         </div>
         <div class="item-info">
@@ -138,11 +138,11 @@
     <div class="swaps-list">
       <div class="swap-item" *ngFor="let swap of swaps">
         <div class="swap-info">
-          <div class="swap-type" [class]="swap.type">
-            {{ swap.type === 'incoming' ? 'Incoming' : 'Outgoing' }}
+          <div class="swap-type" [class]="getSwapType(swap)">
+            {{ getSwapType(swap) === 'incoming' ? 'Incoming' : 'Outgoing' }}
           </div>
-          <h4>{{ swap.itemTitle }}</h4>
-          <p>with {{ swap.otherUser }}</p>
+          <h4>{{ swap.product1.title }} ↔ {{ swap.product2.title }}</h4>
+          <p>with {{ getOtherUser(swap).name }}</p>
           <span class="swap-date">{{ swap.createdAt | date:'MMM dd, yyyy' }}</span>
         </div>
         
@@ -152,15 +152,30 @@
           </span>
         </div>
         
-        <div class="swap-actions" *ngIf="swap.status === 'pending' && swap.type === 'incoming'">
+        <div class="swap-actions" *ngIf="swap.status === 'pending' && getSwapType(swap) === 'incoming'">
           <button class="btn btn-success" (click)="acceptSwap(swap.id)">Accept</button>
           <button class="btn btn-danger" (click)="rejectSwap(swap.id)">Reject</button>
         </div>
         
-        <div class="swap-actions" *ngIf="swap.status === 'accepted'">
+        <div class="swap-actions" *ngIf="swap.status === 'approved'">
           <button class="btn btn-primary" (click)="completeSwap(swap.id)">Mark Complete</button>
         </div>
       </div>
     </div>
+  </div>
+</div>
+
+<!-- Loading State -->
+<div class="loading-state" *ngIf="isLoading">
+  <div class="loading-spinner"></div>
+  <p>Loading dashboard...</p>
+</div>
+
+<!-- Not Logged In State -->
+<div class="not-logged-in" *ngIf="!isLoading && !userProfile">
+  <div class="empty-state">
+    <h2>Please log in to view your dashboard</h2>
+    <p>You need to be logged in to access your dashboard.</p>
+    <a routerLink="/login" class="btn btn-primary">Log In</a>
   </div>
 </div> 
