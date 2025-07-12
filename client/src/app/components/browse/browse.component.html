@@ -1,4 +1,20 @@
-<div class="browse-container">
+<div class="browse-container" *ngIf="isAuthenticated">
+  <!-- Success Message Banner -->
+  <div class="success-banner" *ngIf="showSuccessMessage">
+    <div class="success-content">
+      <div class="success-icon">✅</div>
+      <div class="success-text">
+        <h4>Success!</h4>
+        <p>{{ successMessage }}</p>
+      </div>
+      <button class="close-btn" (click)="closeSuccessMessage()">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+          <path d="M18 6L6 18M6 6L18 18" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+        </svg>
+      </button>
+    </div>
+  </div>
+
   <div class="browse-header">
     <h1>Browse Items</h1>
     <p>Discover sustainable fashion items available for swap or points redemption</p>
@@ -129,5 +145,14 @@
       <p>Try adjusting your search criteria or filters</p>
       <button class="btn btn-primary" (click)="clearFilters()">Clear All Filters</button>
     </div>
+  </div>
+</div>
+
+<!-- Not Authenticated State -->
+<div class="not-authenticated" *ngIf="!isAuthenticated">
+  <div class="empty-state">
+    <h2>Please log in to browse items</h2>
+    <p>You need to be logged in to browse items on ReWear.</p>
+    <a routerLink="/login" class="btn btn-primary">Log In</a>
   </div>
 </div> 

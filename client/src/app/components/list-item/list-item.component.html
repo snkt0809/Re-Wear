@@ -178,7 +178,7 @@
       <!-- Images -->
       <div class="form-section">
         <h3>Images</h3>
-        <p class="section-description">Upload up to 5 high-quality images of your item</p>
+        <p class="section-description">Upload up to 5 high-quality images of your item. Images will be uploaded to ImgBB for public access.</p>
         
         <div class="image-upload-area">
           <div class="upload-zone" *ngIf="selectedImages.length < 5">
@@ -218,32 +218,20 @@
 
     <!-- Submit Button -->
     <div class="form-actions">
-      <button type="button" class="btn btn-outline" routerLink="/dashboard">
-        Cancel
-      </button>
       <button 
         type="submit" 
-        class="btn btn-primary" 
+        class="btn btn-primary list-item-btn" 
         [disabled]="isSubmitting || listItemForm.invalid || selectedImages.length === 0">
-        <span *ngIf="!isSubmitting">List Item</span>
-        <span *ngIf="isSubmitting">Listing...</span>
+        <span *ngIf="!isSubmitting">
+          List Item
+        </span>
+        <span *ngIf="isSubmitting">
+          <div class="spinner"></div>
+          {{ selectedImages.length > 0 ? 'Uploading Images...' : 'Listing...' }}
+        </span>
       </button>
     </div>
   </form>
-</div>
-
-<!-- Success Modal -->
-<div class="modal-overlay" *ngIf="showSuccessModal">
-  <div class="modal-content success-modal">
-    <div class="success-icon">✅</div>
-    <h3>Item Listed Successfully!</h3>
-    <p>Your item has been added to the ReWear community. It will be visible to other users once approved.</p>
-    <div class="modal-actions">
-      <button class="btn btn-primary" (click)="closeSuccessModal()">
-        Go to Dashboard
-      </button>
-    </div>
-  </div>
 </div>
 
 <!-- Not Authenticated State -->

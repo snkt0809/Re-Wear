@@ -26,7 +26,7 @@
         <div class="stat-label">Items Listed</div>
       </div>
       <div class="stat">
-        <div class="stat-number">{{ userProfile.swapsCompleted }}</div>
+        <div class="stat-number">{{ userProfile.swapsCompleted || 0 }}</div>
         <div class="stat-label">Swaps Completed</div>
       </div>
     </div>
@@ -60,25 +60,19 @@
       <div class="overview-card">
         <h3>Recent Activity</h3>
         <div class="activity-list">
-          <div class="activity-item">
-            <div class="activity-icon">🔄</div>
+          <div class="activity-item" *ngFor="let activity of recentActivity">
+            <div class="activity-icon">{{ activity.icon }}</div>
             <div class="activity-details">
-              <p>Swap request received for "Vintage Denim Jacket"</p>
-              <span class="activity-time">2 hours ago</span>
+              <p>{{ activity.title }}</p>
+              <span class="activity-time">{{ activity.time }}</span>
+              <span class="activity-description" *ngIf="activity.description">{{ activity.description }}</span>
             </div>
           </div>
-          <div class="activity-item">
-            <div class="activity-icon">✅</div>
+          <div class="activity-item empty-state" *ngIf="recentActivity.length === 0">
+            <div class="activity-icon">📋</div>
             <div class="activity-details">
-              <p>Swap completed with Lisa Park</p>
-              <span class="activity-time">1 day ago</span>
-            </div>
-          </div>
-          <div class="activity-item">
-            <div class="activity-icon">📦</div>
-            <div class="activity-details">
-              <p>New item listed: "Organic Cotton T-Shirt"</p>
-              <span class="activity-time">3 days ago</span>
+              <p>No recent activity</p>
+              <span class="activity-time">Start by listing an item or browsing for swaps!</span>
             </div>
           </div>
         </div>
@@ -172,7 +166,7 @@
 </div>
 
 <!-- Not Logged In State -->
-<div class="not-logged-in" *ngIf="!isLoading && !userProfile">
+<div class="not-authenticated" *ngIf="!isLoading && !userProfile">
   <div class="empty-state">
     <h2>Please log in to view your dashboard</h2>
     <p>You need to be logged in to access your dashboard.</p>

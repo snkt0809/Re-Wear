@@ -37,15 +37,22 @@ export class ChatbotComponent implements OnInit {
     ];
   }
 
-  toggleChat() {
-    this.isOpen = !this.isOpen;
-    if (this.isOpen) {
-      this.isMinimized = false;
-    }
+  openChat() {
+    this.isOpen = true;
+    this.isMinimized = false;
+  }
+
+  closeChat() {
+    this.isOpen = false;
+    this.isMinimized = false;
   }
 
   minimizeChat() {
     this.isMinimized = true;
+  }
+
+  restoreChat() {
+    this.isMinimized = false;
   }
 
   sendMessage() {

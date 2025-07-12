@@ -54,7 +54,7 @@
       padding: 0 1rem;
       
       .nav-btn {
-        background: rgba(255, 255, 255, 0.9);
+        background: var(--card-bg);
         border: none;
         border-radius: 50%;
         width: 48px;
@@ -66,7 +66,7 @@
         transition: all 0.2s;
         
         &:hover:not(:disabled) {
-          background: white;
+          background: var(--background-secondary);
           transform: scale(1.1);
         }
         
