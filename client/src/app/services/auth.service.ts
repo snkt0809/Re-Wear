@@ -18,15 +18,40 @@ export class AuthService {
   private checkStoredUser(): void {
     if (typeof window !== 'undefined') {
       const storedUser = localStorage.getItem('currentUser');
-      if (storedUser) {
+      const token = localStorage.getItem('token');
+      
+      console.log('AuthService: Checking stored user:', { 
+        storedUser: !!storedUser, 
+        token: !!token,
+        storedUserData: storedUser ? JSON.parse(storedUser) : null
+      });
+      
+      if (storedUser && token) {
         try {
           const user = JSON.parse(storedUser);
-          this.currentUserSubject.next(user);
+          console.log('AuthService: Loading user from localStorage:', user);
+          // Ensure default values for user
+          const userWithDefaults = {
+            ...user,
+            swapsCompleted: user.swapsCompleted || 0,
+            points: user.points || 0
+          };
+          console.log('AuthService: Setting user with defaults:', userWithDefaults);
+          this.currentUserSubject.next(userWithDefaults);
         } catch (error) {
           console.error('Error parsing stored user:', error);
           localStorage.removeItem('currentUser');
+          localStorage.removeItem('token');
         }
+      } else if (token && !storedUser) {
+        // If we have a token but no stored user, try to load the user from API
+        console.log('AuthService: Loading user from API');
+        this.loadCurrentUser();
+      } else {
+        console.log('AuthService: No stored user or token found');
       }
+    } else {
+      console.log('AuthService: Not in browser environment');
     }
   }
 
@@ -41,9 +66,16 @@ export class AuthService {
   private loadCurrentUser(): void {
     this.apiService.getCurrentUser().subscribe({
       next: (user: User) => {
-        this.currentUserSubject.next(user);
+        // Ensure default values for user
+        const userWithDefaults = {
+          ...user,
+          swapsCompleted: user.swapsCompleted || 0,
+          points: user.points || 0
+        };
+        
+        this.currentUserSubject.next(userWithDefaults);
         if (typeof window !== 'undefined') {
-          localStorage.setItem('currentUser', JSON.stringify(user));
+          localStorage.setItem('currentUser', JSON.stringify(userWithDefaults));
         }
       },
       error: (error) => {
@@ -62,9 +94,17 @@ export class AuthService {
             // Load current user and wait for it to complete
             this.apiService.getCurrentUser().subscribe({
               next: (user: User) => {
-                this.currentUserSubject.next(user);
+                console.log('AuthService: User loaded after login:', user);
+                // Ensure default values for user
+                const userWithDefaults = {
+                  ...user,
+                  swapsCompleted: user.swapsCompleted || 0,
+                  points: user.points || 0
+                };
+                
+                this.currentUserSubject.next(userWithDefaults);
                 if (typeof window !== 'undefined') {
-                  localStorage.setItem('currentUser', JSON.stringify(user));
+                  localStorage.setItem('currentUser', JSON.stringify(userWithDefaults));
                 }
                 observer.next(true);
                 observer.complete();
@@ -102,9 +142,16 @@ export class AuthService {
             // Load current user and wait for it to complete
             this.apiService.getCurrentUser().subscribe({
               next: (user: User) => {
-                this.currentUserSubject.next(user);
+                // Ensure default values for user
+                const userWithDefaults = {
+                  ...user,
+                  swapsCompleted: user.swapsCompleted || 0,
+                  points: user.points || 0
+                };
+                
+                this.currentUserSubject.next(userWithDefaults);
                 if (typeof window !== 'undefined') {
-                  localStorage.setItem('currentUser', JSON.stringify(user));
+                  localStorage.setItem('currentUser', JSON.stringify(userWithDefaults));
                 }
                 observer.next(true);
                 observer.complete();

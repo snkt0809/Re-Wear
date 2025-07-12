@@ -1,0 +1,20 @@
+<div class="testimonial-section">
+  <div class="content-wrapper">
+    <h2>What Our Community Says</h2>
+    <div class="testimonials-grid">
+      <div class="testimonial-card" *ngFor="let testimonial of testimonials">
+        <div class="testimonial-content">
+          <div class="stars">{{ testimonial.stars }}</div>
+          <p>{{ testimonial.text }}</p>
+          <div class="testimonial-author">
+            <div class="author-avatar">{{ testimonial.author.initial }}</div>
+            <div class="author-info">
+              <h4>{{ testimonial.author.name }}</h4>
+              <span>{{ testimonial.author.role }}</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div> 

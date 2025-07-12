@@ -1,119 +1,133 @@
-import { CommonModule, isPlatformBrowser } from '@angular/common';
-import { Component, OnInit, Inject, PLATFORM_ID, OnDestroy } from '@angular/core';
+import { Component, OnInit, inject, Inject, PLATFORM_ID } from '@angular/core';
+import { CommonModule } from '@angular/common';
 import { RouterModule } from '@angular/router';
-import { ChatbotComponent } from '../chatbot/chatbot.component';
+import { isPlatformBrowser } from '@angular/common';
 import { AuthService } from '../../services/auth.service';
-import { User } from '../../services/api.service';
-
-interface FeaturedItem {
-  id: number;
-  title: string;
-  category: string;
-  size: string;
-  points: number;
-  type: 'swap' | 'points';
-  image: string;
-}
+import { ApiService, Item, User } from '../../services/api.service';
+import { HeroComponent } from '../hero/hero.component';
+import { FeaturesComponent } from '../features/features.component';
+import { StatsComponent } from '../stats/stats.component';
+import { TestimonialsComponent } from '../testimonials/testimonials.component';
+import { ChatbotComponent } from '../chatbot/chatbot.component';
+import { firstValueFrom } from 'rxjs';
 
 @Component({
   selector: 'app-home',
   standalone: true,
-  templateUrl: './home.component.html',
-  styleUrls: ['./home.component.scss'],
   imports: [
     CommonModule,
     RouterModule,
+    HeroComponent,
+    FeaturesComponent,
+    StatsComponent,
+    TestimonialsComponent,
     ChatbotComponent
-  ]
+  ],
+  templateUrl: './home.component.html',
+  styleUrls: ['./home.component.scss']
 })
-export class HomeComponent implements OnInit, OnDestroy {
-  currentSlide = 0;
-  private carouselInterval: any;
+export class HomeComponent implements OnInit {
   currentUser: User | null = null;
+  featuredItems: Item[] = [];
+  currentSlide = 0;
 
   constructor(
     @Inject(PLATFORM_ID) private platformId: Object,
-    private authService: AuthService
+    private authService: AuthService,
+    private apiService: ApiService
   ) {}
-  featuredItems: FeaturedItem[] = [
-    {
-      id: 1,
-      title: 'Vintage Denim Jacket',
-      category: 'Outerwear',
-      size: 'M',
-      points: 150,
-      type: 'swap',
-      image: 'https://images.unsplash.com/photo-1576995853123-5a10305d93c0?w=400&h=400&fit=crop'
-    },
-    {
-      id: 2,
-      title: 'Organic Cotton T-Shirt',
-      category: 'Tops',
-      size: 'L',
-      points: 80,
-      type: 'points',
-      image: 'https://images.unsplash.com/photo-1521572163474-6864f9cf17ab?w=400&h=400&fit=crop'
-    },
-    {
-      id: 3,
-      title: 'Sustainable Wool Sweater',
-      category: 'Sweaters',
-      size: 'S',
-      points: 200,
-      type: 'swap',
-      image: 'https://images.unsplash.com/photo-1434389677669-e08b4cac3105?w=400&h=400&fit=crop'
-    },
-    {
-      id: 4,
-      title: 'Eco-Friendly Jeans',
-      category: 'Bottoms',
-      size: '32',
-      points: 120,
-      type: 'points',
-      image: 'https://images.unsplash.com/photo-1542272604-787c3835535d?w=400&h=400&fit=crop'
-    },
-    {
-      id: 5,
-      title: 'Recycled Polyester Dress',
-      category: 'Dresses',
-      size: 'M',
-      points: 180,
-      type: 'swap',
-      image: 'https://images.unsplash.com/photo-1515372039744-b8f02a3ae446?w=400&h=400&fit=crop'
-    }
-  ];
 
   ngOnInit(): void {
-    // Get current user
-    this.currentUser = this.authService.getCurrentUser();
-    
-    // Auto-advance carousel every 5 seconds (only in browser)
-    if (isPlatformBrowser(this.platformId)) {
-      this.carouselInterval = setInterval(() => {
-        this.nextSlide();
-      }, 5000);
+    this.authService.currentUser$.subscribe(user => {
+      this.currentUser = user;
+      // Load featured items when user state changes
+      this.loadFeaturedItems();
+    });
+  }
+
+  async loadFeaturedItems(): Promise<void> {
+    // Only try to load items if user is authenticated
+    if (!this.currentUser) {
+      console.log('User not authenticated, using fallback data');
+      this.loadFallbackItems();
+      return;
+    }
+
+    try {
+      const items = await firstValueFrom(this.apiService.getAllItems());
+      this.featuredItems = items?.slice(0, 6) || []; // Show first 6 items
+    } catch (error) {
+      console.error('Error loading featured items:', error);
+      // Fallback to mock data if API fails
+      this.loadFallbackItems();
     }
   }
 
-  ngOnDestroy(): void {
-    if (this.carouselInterval) {
-      clearInterval(this.carouselInterval);
-    }
+  private loadFallbackItems(): void {
+    this.featuredItems = [
+      {
+        id: '1',
+        title: 'Vintage Denim Jacket',
+        description: 'Classic denim jacket in excellent condition',
+        category: 'Men',
+        size: 'M',
+        condition: 'Like New',
+        images: ['https://images.unsplash.com/photo-1544022613-e87ca75a784a?w=400'],
+        tags: ['denim', 'jacket', 'vintage'],
+        location: 'New York',
+        points: 150,
+        availability: 'available',
+        uploader: {
+          id: 'user1',
+          name: 'John Doe',
+          swapsCompleted: 5,
+          memberSince: '2023-01-01'
+        },
+        createdAt: '2024-01-01'
+      },
+      {
+        id: '2',
+        title: 'Summer Dress',
+        description: 'Beautiful floral summer dress',
+        category: 'Women',
+        size: 'S',
+        condition: 'Good',
+        images: ['https://images.unsplash.com/photo-1515372039744-b8f02a3ae446?w=400'],
+        tags: ['dress', 'summer', 'floral'],
+        location: 'Los Angeles',
+        points: 100,
+        availability: 'available',
+        uploader: {
+          id: 'user2',
+          name: 'Jane Smith',
+          swapsCompleted: 3,
+          memberSince: '2023-02-01'
+        },
+        createdAt: '2024-01-02'
+      }
+    ];
   }
 
   previousSlide(): void {
-    this.currentSlide = this.currentSlide === 0 
-      ? this.featuredItems.length - 1 
-      : this.currentSlide - 1;
+    this.currentSlide = this.currentSlide > 0 ? this.currentSlide - 1 : this.featuredItems.length - 1;
   }
 
   nextSlide(): void {
-    this.currentSlide = this.currentSlide === this.featuredItems.length - 1 
-      ? 0 
-      : this.currentSlide + 1;
+    this.currentSlide = this.currentSlide < this.featuredItems.length - 1 ? this.currentSlide + 1 : 0;
   }
 
   goToSlide(index: number): void {
     this.currentSlide = index;
+  }
+
+  onSwapRequest(item: Item): void {
+    if (!this.currentUser) {
+      // Redirect to login
+      window.location.href = '/login';
+      return;
+    }
+    
+    // Handle swap request logic
+    console.log('Swap request for item:', item);
   }
 } 

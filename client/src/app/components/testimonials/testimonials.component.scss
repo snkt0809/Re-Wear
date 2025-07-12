@@ -1,0 +1,110 @@
+.testimonial-section {
+  background: var(--card-bg);
+  margin: 4rem -1rem 0 -1rem;
+  padding: 4rem 1rem;
+  border-top: 1px solid var(--border-color);
+
+  h2 {
+    text-align: center;
+    font-size: 2.5rem;
+    color: var(--text-primary);
+    margin-bottom: 3rem;
+    font-weight: 700;
+    background: linear-gradient(135deg, #4CAF50, #66BB6A);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+  }
+
+  .testimonials-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
+    gap: 2rem;
+    max-width: 1200px;
+    margin: 0 auto;
+
+    @media (max-width: 768px) {
+      grid-template-columns: 1fr;
+      gap: 1.5rem;
+    }
+  }
+
+  .testimonial-card {
+    background: var(--background-primary);
+    border-radius: 16px;
+    padding: 2rem;
+    border: 2px solid var(--border-color);
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
+    transition: all 0.3s ease;
+    position: relative;
+    overflow: hidden;
+
+    &::before {
+      content: '"';
+      position: absolute;
+      top: -10px;
+      left: 20px;
+      font-size: 6rem;
+      color: rgba(76, 175, 80, 0.1);
+      font-family: serif;
+      line-height: 1;
+    }
+
+    &:hover {
+      transform: translateY(-8px);
+      box-shadow: 0 12px 40px rgba(76, 175, 80, 0.15);
+      border-color: #4CAF50;
+    }
+
+    .testimonial-content {
+      position: relative;
+      z-index: 1;
+    }
+
+    .stars {
+      font-size: 1.2rem;
+      margin-bottom: 1rem;
+      color: #FFD700;
+    }
+
+    p {
+      color: var(--text-primary);
+      line-height: 1.7;
+      margin-bottom: 1.5rem;
+      font-size: 1.1rem;
+      font-style: italic;
+    }
+
+    .testimonial-author {
+      display: flex;
+      align-items: center;
+      gap: 1rem;
+
+      .author-avatar {
+        width: 50px;
+        height: 50px;
+        background: linear-gradient(135deg, #4CAF50, #66BB6A);
+        color: white;
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-weight: 700;
+        font-size: 1.2rem;
+      }
+
+      .author-info {
+        h4 {
+          color: var(--text-primary);
+          margin: 0 0 0.25rem 0;
+          font-weight: 600;
+        }
+
+        span {
+          color: var(--text-secondary);
+          font-size: 0.9rem;
+        }
+      }
+    }
+  }
+} 

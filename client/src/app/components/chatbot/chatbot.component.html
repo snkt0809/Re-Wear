@@ -1,13 +1,21 @@
 <!-- Chatbot Toggle Button -->
-<div class="chatbot-toggle" (click)="toggleChat()" *ngIf="!isOpen">
+<div class="chatbot-toggle" (click)="openChat()" *ngIf="!isOpen && !isMinimized">
   <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
     <path d="M21 15C21 15.5304 20.7893 16.0391 20.4142 16.4142C20.0391 16.7893 19.5304 17 19 17H7L3 21V5C3 4.46957 3.21071 3.96086 3.58579 3.58579C3.96086 3.21071 4.46957 3 5 3H19C19.5304 3 20.0391 3.21071 20.4142 3.58579C20.7893 3.96086 21 4.46957 21 5V15Z" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
   </svg>
   <span>Need Help?</span>
 </div>
 
+<!-- Minimized Bar -->
+<div class="chatbot-minimized-bar" *ngIf="isMinimized" (click)="restoreChat()">
+  <svg width="20" height="20" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+    <path d="M21 15C21 15.5304 20.7893 16.0391 20.4142 16.4142C20.0391 16.7893 19.5304 17 19 17H7L3 21V5C3 4.46957 3.21071 3.96086 3.58579 3.58579C3.96086 3.21071 4.46957 3 5 3H19C19.5304 3 20.0391 3.21071 20.4142 3.58579C20.7893 3.96086 21 4.46957 21 5V15Z" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+  </svg>
+  <span>Chat with ReWear Assistant</span>
+</div>
+
 <!-- Chatbot Window -->
-<div class="chatbot-window" *ngIf="isOpen" [class.minimized]="isMinimized">
+<div class="chatbot-window" *ngIf="isOpen && !isMinimized">
   <!-- Header -->
   <div class="chatbot-header">
     <div class="chatbot-title">
@@ -27,7 +35,7 @@
           <path d="M5 12H19" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
         </svg>
       </button>
-      <button class="control-btn close" (click)="toggleChat()" title="Close">
+      <button class="control-btn close" (click)="closeChat()" title="Close">
         <svg width="16" height="16" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
           <path d="M18 6L6 18M6 6L18 18" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
         </svg>

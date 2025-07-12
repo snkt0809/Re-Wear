@@ -16,10 +16,15 @@
   --navbar-hover: #2a2a2a;
   --navbar-active: #4dabf7;
   --navbar-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);
+  
+  .user-dropdown {
+    background: rgba(26, 26, 26, 0.95) !important;
+    backdrop-filter: blur(10px);
+  }
 }
 
 .navbar {
-  background-color: rgba(255, 255, 255, 0.95);
+  background-color: var(--navbar-bg);
   backdrop-filter: blur(10px);
   border-bottom: 1px solid var(--navbar-border);
   box-shadow: var(--navbar-shadow);
@@ -238,7 +243,8 @@
           position: absolute;
           top: 100%;
           right: 0;
-          background: var(--navbar-bg);
+          background: rgba(255, 255, 255, 0.95);
+          backdrop-filter: blur(10px);
           border: 1px solid var(--navbar-border);
           border-radius: 8px;
           box-shadow: 0 4px 20px rgba(0, 0, 0, 0.15);
@@ -248,6 +254,29 @@
           visibility: hidden;
           transform: translateY(-10px);
           transition: all 0.3s ease;
+          overflow: hidden;
+
+          &::before {
+            content: '🌱';
+            position: absolute;
+            top: 10px;
+            right: 10px;
+            font-size: 1.2rem;
+            opacity: 0.3;
+            animation: float 3s ease-in-out infinite;
+            pointer-events: none;
+          }
+
+          &::after {
+            content: '🍃';
+            position: absolute;
+            bottom: 10px;
+            left: 10px;
+            font-size: 1rem;
+            opacity: 0.2;
+            animation: float 4s ease-in-out infinite reverse;
+            pointer-events: none;
+          }
 
           .dropdown-item {
             display: flex;
@@ -438,4 +467,9 @@
 // Animation for theme transition
 * {
   transition: background-color 0.3s ease, color 0.3s ease, border-color 0.3s ease;
+}
+
+@keyframes float {
+  0%, 100% { transform: translateY(0px) rotate(0deg); }
+  50% { transform: translateY(-5px) rotate(2deg); }
 } 
