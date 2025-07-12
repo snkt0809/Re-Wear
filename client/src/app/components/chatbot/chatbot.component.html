@@ -1,0 +1,97 @@
+<!-- Chatbot Toggle Button -->
+<div class="chatbot-toggle" (click)="toggleChat()" *ngIf="!isOpen">
+  <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+    <path d="M21 15C21 15.5304 20.7893 16.0391 20.4142 16.4142C20.0391 16.7893 19.5304 17 19 17H7L3 21V5C3 4.46957 3.21071 3.96086 3.58579 3.58579C3.96086 3.21071 4.46957 3 5 3H19C19.5304 3 20.0391 3.21071 20.4142 3.58579C20.7893 3.96086 21 4.46957 21 5V15Z" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+  </svg>
+  <span>Need Help?</span>
+</div>
+
+<!-- Chatbot Window -->
+<div class="chatbot-window" *ngIf="isOpen" [class.minimized]="isMinimized">
+  <!-- Header -->
+  <div class="chatbot-header">
+    <div class="chatbot-title">
+      <div class="chatbot-avatar">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+          <path d="M12 2L13.09 8.26L20 9L13.09 9.74L12 16L10.91 9.74L4 9L10.91 8.26L12 2Z" fill="currentColor"/>
+        </svg>
+      </div>
+      <div class="chatbot-info">
+        <h3>ReWear Assistant</h3>
+        <span class="status">Online</span>
+      </div>
+    </div>
+    <div class="chatbot-controls">
+      <button class="control-btn minimize" (click)="minimizeChat()" title="Minimize">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+          <path d="M5 12H19" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+        </svg>
+      </button>
+      <button class="control-btn close" (click)="toggleChat()" title="Close">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+          <path d="M18 6L6 18M6 6L18 18" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+        </svg>
+      </button>
+    </div>
+  </div>
+
+  <!-- Messages -->
+  <div class="chatbot-messages" #messageContainer>
+    <div 
+      *ngFor="let message of messages" 
+      class="message"
+      [class.user-message]="message.sender === 'user'"
+      [class.bot-message]="message.sender === 'bot'"
+    >
+      <div class="message-content">
+        <div class="message-text" [innerHTML]="formatMessageText(message.text)"></div>
+        <div class="message-time">{{ message.timestamp | date:'shortTime' }}</div>
+      </div>
+      <div class="message-avatar" *ngIf="message.sender === 'bot'">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+          <path d="M12 2L13.09 8.26L20 9L13.09 9.74L12 16L10.91 9.74L4 9L10.91 8.26L12 2Z" fill="currentColor"/>
+        </svg>
+      </div>
+    </div>
+    
+    <!-- Loading indicator -->
+    <div class="message bot-message" *ngIf="isLoading">
+      <div class="message-content">
+        <div class="loading-dots">
+          <span></span>
+          <span></span>
+          <span></span>
+        </div>
+      </div>
+      <div class="message-avatar">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+          <path d="M12 2L13.09 8.26L20 9L13.09 9.74L12 16L10.91 9.74L4 9L10.91 8.26L12 2Z" fill="currentColor"/>
+        </svg>
+      </div>
+    </div>
+  </div>
+
+  <!-- Input -->
+  <div class="chatbot-input">
+    <div class="input-container">
+      <textarea 
+        [(ngModel)]="userInput" 
+        (keydown)="onKeyPress($event)"
+        placeholder="Type your message..."
+        rows="1"
+        class="message-input"
+        [disabled]="isLoading"
+      ></textarea>
+      <button 
+        class="send-btn" 
+        (click)="sendMessage()"
+        [disabled]="!userInput.trim() || isLoading"
+        title="Send message"
+      >
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+          <path d="M22 2L11 13M22 2L15 22L11 13M22 2L2 9L11 13" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+        </svg>
+      </button>
+    </div>
+  </div>
+</div>

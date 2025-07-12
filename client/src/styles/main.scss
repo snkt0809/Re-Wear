@@ -1,0 +1,23 @@
+// src/styles/main.scss
+//@import './reset';
+@import './variables';
+// @import './mixins';
+// @import './typography';
+@import './theme';
+
+// Global styles for the application
+* {
+  box-sizing: border-box;
+}
+
+html, body {
+  height: 100%;
+  margin: 0;
+  padding: 0;
+}
+
+body {
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+  line-height: 1.6;
+  transition: background-color 0.3s ease, color 0.3s ease;
+}

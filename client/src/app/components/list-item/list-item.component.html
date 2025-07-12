@@ -1,0 +1,256 @@
+<div class="list-item-container" *ngIf="isAuthenticated">
+  <div class="list-item-header">
+    <h1>List a New Item</h1>
+    <p>Share your sustainable fashion items with the ReWear community</p>
+  </div>
+
+  <form [formGroup]="listItemForm" (ngSubmit)="onSubmit()" class="list-item-form">
+    <div class="form-sections">
+      <!-- Basic Information -->
+      <div class="form-section">
+        <h3>Basic Information</h3>
+        
+        <div class="form-row">
+          <div class="form-group full-width">
+            <label for="title">Item Title *</label>
+            <input 
+              type="text" 
+              id="title" 
+              formControlName="title" 
+              class="form-control"
+              [class.invalid]="isFieldInvalid('title')"
+              placeholder="e.g., Vintage Denim Jacket">
+            <div class="error-message" *ngIf="getErrorMessage('title')">
+              {{ getErrorMessage('title') }}
+            </div>
+          </div>
+        </div>
+
+        <div class="form-row">
+          <div class="form-group">
+            <label for="category">Category *</label>
+            <select 
+              id="category" 
+              formControlName="category" 
+              class="form-control"
+              [class.invalid]="isFieldInvalid('category')">
+              <option value="">Select category</option>
+              <option *ngFor="let category of categories" [value]="category">
+                {{ category }}
+              </option>
+            </select>
+            <div class="error-message" *ngIf="getErrorMessage('category')">
+              {{ getErrorMessage('category') }}
+            </div>
+          </div>
+
+          <div class="form-group">
+            <label for="size">Size *</label>
+            <select 
+              id="size" 
+              formControlName="size" 
+              class="form-control"
+              [class.invalid]="isFieldInvalid('size')">
+              <option value="">Select size</option>
+              <option *ngFor="let size of sizes" [value]="size">
+                {{ size }}
+              </option>
+            </select>
+            <div class="error-message" *ngIf="getErrorMessage('size')">
+              {{ getErrorMessage('size') }}
+            </div>
+          </div>
+        </div>
+
+        <div class="form-row">
+          <div class="form-group">
+            <label for="condition">Condition *</label>
+            <select 
+              id="condition" 
+              formControlName="condition" 
+              class="form-control"
+              [class.invalid]="isFieldInvalid('condition')">
+              <option value="">Select condition</option>
+              <option *ngFor="let condition of conditions" [value]="condition">
+                {{ condition }}
+              </option>
+            </select>
+            <div class="error-message" *ngIf="getErrorMessage('condition')">
+              {{ getErrorMessage('condition') }}
+            </div>
+          </div>
+
+          <div class="form-group">
+            <label for="points">Points Required *</label>
+            <input 
+              type="number" 
+              id="points" 
+              formControlName="points" 
+              class="form-control"
+              [class.invalid]="isFieldInvalid('points')"
+              placeholder="50"
+              min="1">
+            <div class="error-message" *ngIf="getErrorMessage('points')">
+              {{ getErrorMessage('points') }}
+            </div>
+          </div>
+        </div>
+
+        <div class="form-row">
+          <div class="form-group">
+            <label for="location">Location *</label>
+            <input 
+              type="text" 
+              id="location" 
+              formControlName="location" 
+              class="form-control"
+              [class.invalid]="isFieldInvalid('location')"
+              placeholder="e.g., San Francisco, CA">
+            <div class="error-message" *ngIf="getErrorMessage('location')">
+              {{ getErrorMessage('location') }}
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Description -->
+      <div class="form-section">
+        <h3>Description</h3>
+        
+        <div class="form-group full-width">
+          <label for="description">Item Description *</label>
+          <textarea 
+            id="description" 
+            formControlName="description" 
+            class="form-control"
+            [class.invalid]="isFieldInvalid('description')"
+            rows="4"
+            placeholder="Describe your item in detail. Include any unique features, measurements, or special details..."></textarea>
+          <div class="error-message" *ngIf="getErrorMessage('description')">
+            {{ getErrorMessage('description') }}
+          </div>
+        </div>
+
+        <div class="form-row">
+          <div class="form-group">
+            <label for="brand">Brand</label>
+            <input 
+              type="text" 
+              id="brand" 
+              formControlName="brand" 
+              class="form-control"
+              placeholder="e.g., Levi's, H&M">
+          </div>
+
+          <div class="form-group">
+            <label for="color">Color</label>
+            <input 
+              type="text" 
+              id="color" 
+              formControlName="color" 
+              class="form-control"
+              placeholder="e.g., Blue, Black, White">
+          </div>
+        </div>
+
+        <div class="form-group full-width">
+          <label for="material">Material</label>
+          <input 
+            type="text" 
+            id="material" 
+            formControlName="material" 
+            class="form-control"
+            placeholder="e.g., Cotton, Denim, Polyester">
+        </div>
+
+        <div class="form-group full-width">
+          <label for="tags">Tags (comma separated)</label>
+          <input 
+            type="text" 
+            id="tags" 
+            formControlName="tags" 
+            class="form-control"
+            placeholder="e.g., vintage, sustainable, casual, formal">
+          <small class="help-text">Add relevant tags to help others find your item</small>
+        </div>
+      </div>
+
+      <!-- Images -->
+      <div class="form-section">
+        <h3>Images</h3>
+        <p class="section-description">Upload up to 5 high-quality images of your item</p>
+        
+        <div class="image-upload-area">
+          <div class="upload-zone" *ngIf="selectedImages.length < 5">
+            <input 
+              type="file" 
+              id="imageUpload" 
+              multiple 
+              accept="image/*" 
+              (change)="onImageSelect($event)"
+              class="file-input">
+            <label for="imageUpload" class="upload-label">
+              <svg width="48" height="48" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                <path d="M21 15V19C21 19.5304 20.7893 20.0391 20.4142 20.4142C20.0391 20.7893 19.5304 21 19 21H5C4.46957 21 3.96086 20.7893 3.58579 20.4142C3.21071 20.0391 3 19.5304 3 19V15M17 8L12 3M12 3L7 8M12 3V15" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+              </svg>
+              <span>Click to upload images</span>
+              <small>or drag and drop</small>
+            </label>
+          </div>
+
+          <div class="image-previews" *ngIf="imagePreviewUrls.length > 0">
+            <div class="image-preview" *ngFor="let url of imagePreviewUrls; let i = index">
+              <img [src]="url" [alt]="'Preview ' + (i + 1)">
+              <button type="button" class="remove-image" (click)="removeImage(i)">
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                  <path d="M18 6L6 18M6 6L18 18" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                </svg>
+              </button>
+            </div>
+          </div>
+        </div>
+
+        <div class="error-message" *ngIf="selectedImages.length === 0 && listItemForm.touched">
+          At least one image is required
+        </div>
+      </div>
+    </div>
+
+    <!-- Submit Button -->
+    <div class="form-actions">
+      <button type="button" class="btn btn-outline" routerLink="/dashboard">
+        Cancel
+      </button>
+      <button 
+        type="submit" 
+        class="btn btn-primary" 
+        [disabled]="isSubmitting || listItemForm.invalid || selectedImages.length === 0">
+        <span *ngIf="!isSubmitting">List Item</span>
+        <span *ngIf="isSubmitting">Listing...</span>
+      </button>
+    </div>
+  </form>
+</div>
+
+<!-- Success Modal -->
+<div class="modal-overlay" *ngIf="showSuccessModal">
+  <div class="modal-content success-modal">
+    <div class="success-icon">✅</div>
+    <h3>Item Listed Successfully!</h3>
+    <p>Your item has been added to the ReWear community. It will be visible to other users once approved.</p>
+    <div class="modal-actions">
+      <button class="btn btn-primary" (click)="closeSuccessModal()">
+        Go to Dashboard
+      </button>
+    </div>
+  </div>
+</div>
+
+<!-- Not Authenticated State -->
+<div class="not-authenticated" *ngIf="!isAuthenticated">
+  <div class="empty-state">
+    <h2>Please log in to list an item</h2>
+    <p>You need to be logged in to list items on ReWear.</p>
+    <a routerLink="/login" class="btn btn-primary">Log In</a>
+  </div>
+</div> 

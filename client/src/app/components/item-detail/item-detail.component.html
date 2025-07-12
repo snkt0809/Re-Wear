@@ -1,0 +1,187 @@
+<div class="item-detail-container" *ngIf="!isLoading">
+  <div class="back-button">
+    <button class="btn btn-outline" (click)="router.navigate(['/browse'])">
+      <svg width="20" height="20" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+        <path d="M19 12H5M12 19L5 12L12 5" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+      </svg>
+      Back to Browse
+    </button>
+  </div>
+
+  <div class="item-content" *ngIf="item">
+    <!-- Image Gallery -->
+    <div class="image-gallery">
+      <div class="main-image">
+        <img [src]="item.images[currentImageIndex]" [alt]="item.title">
+        <div class="image-navigation">
+          <button class="nav-btn prev" (click)="previousImage()" [disabled]="currentImageIndex === 0">
+            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+              <path d="M15 18L9 12L15 6" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+            </svg>
+          </button>
+          <button class="nav-btn next" (click)="nextImage()" [disabled]="currentImageIndex === item.images.length - 1">
+            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+              <path d="M9 18L15 12L9 6" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+            </svg>
+          </button>
+        </div>
+        <div class="image-counter">
+          {{ currentImageIndex + 1 }} / {{ item.images.length }}
+        </div>
+      </div>
+      
+      <div class="thumbnail-gallery">
+        <div 
+          class="thumbnail" 
+          *ngFor="let image of item.images; let i = index"
+          [class.active]="i === currentImageIndex"
+          (click)="setCurrentImage(i)">
+          <img [src]="image" [alt]="item.title + ' - Image ' + (i + 1)">
+        </div>
+      </div>
+    </div>
+
+    <!-- Item Information -->
+    <div class="item-info">
+      <div class="item-header">
+        <h1>{{ item.title }}</h1>
+        <div class="availability-badge" [style.background-color]="getAvailabilityColor()">
+          {{ getAvailabilityText() }}
+        </div>
+      </div>
+
+      <div class="item-meta">
+        <div class="meta-item">
+          <span class="label">Category:</span>
+          <span class="value">{{ item.category }}</span>
+        </div>
+        <div class="meta-item">
+          <span class="label">Size:</span>
+          <span class="value">{{ item.size }}</span>
+        </div>
+        <div class="meta-item">
+          <span class="label">Condition:</span>
+          <span class="value">{{ item.condition }}</span>
+        </div>
+        <div class="meta-item">
+          <span class="label">Location:</span>
+          <span class="value">{{ item.location }}</span>
+        </div>
+        <div class="meta-item">
+          <span class="label">Listed:</span>
+          <span class="value">{{ item.createdAt | date }}</span>
+        </div>
+      </div>
+
+      <div class="item-description">
+        <h3>Description</h3>
+        <p>{{ item.description }}</p>
+      </div>
+
+      <div class="item-tags">
+        <span class="tag" *ngFor="let tag of item.tags">{{ tag }}</span>
+      </div>
+
+      <!-- Uploader Information -->
+      <div class="uploader-section">
+        <h3>Listed by</h3>
+        <div class="uploader-card">
+          <div class="uploader-avatar">
+            <div class="avatar-placeholder">
+              {{ item.uploader.name.charAt(0) }}
+            </div>
+          </div>
+          <div class="uploader-details">
+            <h4>{{ item.uploader.name }}</h4>
+            <div class="uploader-stats">
+              <span class="swaps">{{ item.uploader.swapsCompleted }} swaps completed</span>
+              <span class="member-since">Member since {{ item.uploader.memberSince }}</span>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Action Buttons -->
+      <div class="action-section">
+        <div class="points-info">
+          <span class="points-label">Points Required:</span>
+          <span class="points-value">{{ item.points }} points</span>
+        </div>
+
+        <div class="action-buttons">
+          <button 
+            class="btn btn-primary btn-large" 
+            *ngIf="item.availability === 'available'"
+            (click)="openSwapModal()">
+            Request Swap
+          </button>
+          <button 
+            class="btn btn-secondary btn-large" 
+            *ngIf="item.availability === 'available'"
+            (click)="redeemWithPoints()">
+            Redeem with Points
+          </button>
+          <button 
+            class="btn btn-secondary btn-large" 
+            *ngIf="item.availability !== 'available'"
+            disabled>
+            {{ item.availability === 'pending' ? 'Pending' : 'Sold' }}
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Loading State -->
+  <div class="loading-state" *ngIf="isLoading">
+    <div class="loading-spinner"></div>
+    <p>Loading item details...</p>
+  </div>
+</div>
+
+<!-- Swap Request Modal -->
+<div class="modal-overlay" *ngIf="showSwapModal" (click)="closeSwapModal()">
+  <div class="modal-content" (click)="$event.stopPropagation()">
+    <div class="modal-header">
+      <h3>Request Swap</h3>
+      <button class="close-btn" (click)="closeSwapModal()">
+        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+          <path d="M18 6L6 18M6 6L18 18" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+        </svg>
+      </button>
+    </div>
+    
+    <form [formGroup]="swapRequestForm" (ngSubmit)="submitSwapRequest()">
+      <div class="swap-info">
+        <p><strong>You want to swap FOR:</strong> {{ item?.title }}</p>
+        <p><strong>You will offer:</strong> (select your item below)</p>
+      </div>
+      
+      <div class="form-group">
+        <label for="proposedItem">Select your item to offer in exchange</label>
+        <select id="proposedItem" formControlName="proposedItem" class="form-control">
+          <option value="">Choose an item from your listings</option>
+          <option value="item1">Vintage T-Shirt (M) - 80 points</option>
+          <option value="item2">Denim Jeans (32) - 120 points</option>
+          <option value="item3">Sneakers (US 9) - 150 points</option>
+        </select>
+        <small class="form-help">This will be the item you're offering to swap for {{ item?.title }}</small>
+      </div>
+      
+      <div class="form-group">
+        <label for="message">Message to the uploader</label>
+        <textarea 
+          id="message" 
+          formControlName="message" 
+          class="form-control" 
+          rows="4"
+          placeholder="Tell them why you'd like to swap and any additional details..."></textarea>
+      </div>
+      
+      <div class="modal-actions">
+        <button type="button" class="btn btn-outline" (click)="closeSwapModal()">Cancel</button>
+        <button type="submit" class="btn btn-primary" [disabled]="swapRequestForm.invalid">Send Request</button>
+      </div>
+    </form>
+  </div>
+</div> 

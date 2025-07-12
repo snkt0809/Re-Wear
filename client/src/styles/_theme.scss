@@ -1,0 +1,28 @@
+// CSS Variables for theming
+:root {
+  --bg-color: #ffffff;
+  --text-color: #333333;
+  --surface-color: #f8f9fa;
+  --border-color: #e5e5e5;
+  --primary-color: #007bff;
+  --accent-color: #6c757d;
+  --error-color: #dc3545;
+  --success-color: #28a745;
+}
+
+.dark {
+  --bg-color: #121212;
+  --text-color: #ffffff;
+  --surface-color: #1f1f1f;
+  --border-color: #333333;
+  --primary-color: #4dabf7;
+  --accent-color: #6c757d;
+  --error-color: #ef5350;
+  --success-color: #66bb6a;
+}
+
+body {
+  background-color: var(--bg-color);
+  color: var(--text-color);
+  transition: background-color 0.3s ease, color 0.3s ease;
+}

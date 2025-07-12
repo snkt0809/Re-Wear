@@ -1,0 +1,133 @@
+<div class="browse-container">
+  <div class="browse-header">
+    <h1>Browse Items</h1>
+    <p>Discover sustainable fashion items available for swap or points redemption</p>
+  </div>
+
+  <!-- Search and Filters -->
+  <div class="filters-section">
+    <form [formGroup]="searchForm" class="filters-form">
+      <div class="search-bar">
+        <div class="search-input">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <path d="M21 21L16.514 16.506L21 21ZM19 10.5C19 15.194 15.194 19 10.5 19C5.806 19 2 15.194 2 10.5C2 5.806 5.806 2 10.5 2C15.194 2 19 5.806 19 10.5Z" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+          </svg>
+          <input 
+            type="text" 
+            formControlName="search"
+            placeholder="Search items, tags, or descriptions..."
+          >
+        </div>
+      </div>
+
+      <div class="filter-controls">
+        <div class="filter-group">
+          <label>Category</label>
+          <select formControlName="category">
+            <option *ngFor="let category of categories" [value]="category">{{ category }}</option>
+          </select>
+        </div>
+
+        <div class="filter-group">
+          <label>Condition</label>
+          <select formControlName="condition">
+            <option *ngFor="let condition of conditions" [value]="condition">{{ condition }}</option>
+          </select>
+        </div>
+
+
+
+        <div class="filter-group">
+          <label>Size</label>
+          <select formControlName="size">
+            <option *ngFor="let size of sizes" [value]="size">{{ size }}</option>
+          </select>
+        </div>
+
+        <div class="filter-group">
+          <label>Sort By</label>
+          <select formControlName="sortBy">
+            <option value="newest">Newest First</option>
+            <option value="oldest">Oldest First</option>
+            <option value="points-high">Points (High to Low)</option>
+            <option value="points-low">Points (Low to High)</option>
+            <option value="rating">Highest Rated</option>
+          </select>
+        </div>
+
+        <button type="button" class="btn btn-outline" (click)="clearFilters()">
+          Clear Filters
+        </button>
+      </div>
+    </form>
+  </div>
+
+  <!-- Results Summary -->
+  <div class="results-summary">
+    <p>{{ filteredItems.length }} items found</p>
+  </div>
+
+  <!-- Items Grid -->
+  <div class="items-grid" *ngIf="filteredItems.length > 0">
+    <div class="item-card" *ngFor="let item of filteredItems">
+      <div class="item-image">
+        <img [src]="item.images[0]" [alt]="item.title">
+        <div class="item-badges">
+          <span class="condition-badge" [style.background-color]="getConditionColor(item.condition)">
+            {{ item.condition | titlecase }}
+          </span>
+        </div>
+      </div>
+
+      <div class="item-info">
+        <h3>{{ item.title }}</h3>
+        <p class="item-description">{{ item.description }}</p>
+        
+        <div class="item-details">
+          <div class="detail-row">
+            <span class="detail-label">Category:</span>
+            <span class="detail-value">{{ item.category }}</span>
+          </div>
+          <div class="detail-row">
+            <span class="detail-label">Size:</span>
+            <span class="detail-value">{{ item.size }}</span>
+          </div>
+          <div class="detail-row">
+            <span class="detail-label">Points:</span>
+            <span class="detail-value points">{{ item.points }} pts</span>
+          </div>
+        </div>
+
+        <div class="uploader-info">
+          <div class="uploader-details">
+            <span class="uploader-name">{{ item.uploader.name }}</span>
+            <div class="uploader-stats">
+              <span class="swaps">{{ item.uploader.swapsCompleted }} swaps</span>
+            </div>
+          </div>
+          <span class="location">{{ item.location }}</span>
+        </div>
+
+        <div class="item-tags">
+          <span class="tag" *ngFor="let tag of item.tags">{{ tag }}</span>
+        </div>
+
+        <div class="item-actions">
+          <button class="btn btn-primary" [routerLink]="['/item', item.id]">
+            View Details
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- No Results -->
+  <div class="no-results" *ngIf="filteredItems.length === 0">
+    <div class="no-results-content">
+      <div class="no-results-icon">🔍</div>
+      <h3>No items found</h3>
+      <p>Try adjusting your search criteria or filters</p>
+      <button class="btn btn-primary" (click)="clearFilters()">Clear All Filters</button>
+    </div>
+  </div>
+</div> 

@@ -1,0 +1,58 @@
+<div class="auth-container">
+  <h2>Create Account</h2>
+  <form [formGroup]="form" (ngSubmit)="onSubmit()">
+    <div class="form-group">
+      <label for="name">Full Name</label>
+      <input 
+        type="text" 
+        id="name"
+        formControlName="name" 
+        placeholder="Enter your full name"
+      />
+      <div class="error" *ngIf="getFieldError('name')">{{ getFieldError('name') }}</div>
+    </div>
+
+    <div class="form-group">
+      <label for="email">Email</label>
+      <input 
+        type="email" 
+        id="email"
+        formControlName="email" 
+        placeholder="Enter your email"
+      />
+      <div class="error" *ngIf="getFieldError('email')">{{ getFieldError('email') }}</div>
+    </div>
+
+    <div class="form-group">
+      <label for="password">Password</label>
+      <input 
+        type="password" 
+        id="password"
+        formControlName="password" 
+        placeholder="Enter your password"
+      />
+      <div class="error" *ngIf="getFieldError('password')">{{ getFieldError('password') }}</div>
+      <small class="help-text">Password must be at least 8 characters long</small>
+    </div>
+
+    <div class="form-group">
+      <label for="confirmPassword">Confirm Password</label>
+      <input 
+        type="password" 
+        id="confirmPassword"
+        formControlName="confirmPassword" 
+        placeholder="Confirm your password"
+      />
+      <div class="error" *ngIf="getFieldError('confirmPassword')">{{ getFieldError('confirmPassword') }}</div>
+    </div>
+
+    <div class="error" *ngIf="error">{{ error }}</div>
+
+          <button type="submit" [disabled]="form.invalid || isLoading">
+        <span *ngIf="!isLoading">Create Account</span>
+        <span *ngIf="isLoading">Creating Account...</span>
+      </button>
+  </form>
+  
+  <p>Already have an account? <a routerLink="/login">Sign In</a></p>
+</div> 
