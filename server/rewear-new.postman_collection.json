@@ -1,0 +1,563 @@
+{
+    "info": {
+        "name": "Re-Wear API",
+        "_postman_id": "rewear-api-collection",
+        "description": "Postman collection for Re-Wear backend API (localhost:8000)",
+        "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+    },
+    "item": [
+        {
+            "name": "Auth",
+            "item": [
+                {
+                    "name": "Register",
+                    "request": {
+                        "method": "POST",
+                        "header": [
+                            {
+                                "key": "Content-Type",
+                                "value": "application/json"
+                            }
+                        ],
+                        "body": {
+                            "mode": "raw",
+                            "raw": "{\n  \"name\": \"John Doe\",\n  \"email\": \"john@example.com\",\n  \"password\": \"password123\"\n}"
+                        },
+                        "url": {
+                            "raw": "http://localhost:8000/api/auth/register",
+                            "protocol": "http",
+                            "host": [
+                                "localhost"
+                            ],
+                            "port": "8000",
+                            "path": [
+                                "api",
+                                "auth",
+                                "register"
+                            ]
+                        }
+                    }
+                },
+                {
+                    "name": "Login",
+                    "request": {
+                        "method": "POST",
+                        "header": [
+                            {
+                                "key": "Content-Type",
+                                "value": "application/json"
+                            }
+                        ],
+                        "body": {
+                            "mode": "raw",
+                            "raw": "{\n  \"email\": \"john@example.com\",\n  \"password\": \"password123\"\n}"
+                        },
+                        "url": {
+                            "raw": "http://localhost:8000/api/auth/login",
+                            "protocol": "http",
+                            "host": [
+                                "localhost"
+                            ],
+                            "port": "8000",
+                            "path": [
+                                "api",
+                                "auth",
+                                "login"
+                            ]
+                        }
+                    }
+                },
+                {
+                    "name": "Get Me (Profile)",
+                    "request": {
+                        "method": "GET",
+                        "header": [
+                            {
+                                "key": "Authorization",
+                                "value": "Bearer {{token}}"
+                            }
+                        ],
+                        "url": {
+                            "raw": "http://localhost:8000/api/auth/me",
+                            "protocol": "http",
+                            "host": [
+                                "localhost"
+                            ],
+                            "port": "8000",
+                            "path": [
+                                "api",
+                                "auth",
+                                "me"
+                            ]
+                        }
+                    }
+                }
+            ]
+        },
+        {
+            "name": "User",
+            "item": [
+                {
+                    "name": "Get User Profile by ID",
+                    "request": {
+                        "method": "GET",
+                        "url": {
+                            "raw": "http://localhost:8000/api/users/{{userId}}",
+                            "protocol": "http",
+                            "host": [
+                                "localhost"
+                            ],
+                            "port": "8000",
+                            "path": [
+                                "api",
+                                "users",
+                                "{{userId}}"
+                            ]
+                        }
+                    }
+                }
+            ]
+        },
+        {
+            "name": "Items",
+            "item": [
+                {
+                    "name": "Add Clothing Item",
+                    "request": {
+                        "method": "POST",
+                        "header": [
+                            {
+                                "key": "Authorization",
+                                "value": "Bearer {{token}}"
+                            },
+                            {
+                                "key": "Content-Type",
+                                "value": "application/json"
+                            }
+                        ],
+                        "body": {
+                            "mode": "raw",
+                            "raw": "{\n  \"title\": \"Blue Shirt\",\n  \"description\": \"A nice blue shirt.\",\n  \"category\": \"Men\",\n  \"size\": \"M\",\n  \"condition\": \"Good\",\n  \"imageUrls\": [\"https://example.com/image.jpg\"],\n  \"location\": \"New York\",\n  \"points\": 15\n}"
+                        },
+                        "url": {
+                            "raw": "http://localhost:8000/api/items/add",
+                            "protocol": "http",
+                            "host": [
+                                "localhost"
+                            ],
+                            "port": "8000",
+                            "path": [
+                                "api",
+                                "items",
+                                "add"
+                            ]
+                        }
+                    }
+                },
+                {
+                    "name": "Get Approved Items",
+                    "request": {
+                        "method": "GET",
+                        "header": [
+                            {
+                                "key": "Authorization",
+                                "value": "Bearer {{token}}"
+                            }
+                        ],
+                        "url": {
+                            "raw": "http://localhost:8000/api/items/",
+                            "protocol": "http",
+                            "host": [
+                                "localhost"
+                            ],
+                            "port": "8000",
+                            "path": [
+                                "api",
+                                "items",
+                                ""
+                            ]
+                        }
+                    }
+                },
+                {
+                    "name": "Get Available Items",
+                    "request": {
+                        "method": "GET",
+                        "header": [
+                            {
+                                "key": "Authorization",
+                                "value": "Bearer {{token}}"
+                            }
+                        ],
+                        "url": {
+                            "raw": "http://localhost:8000/api/items/available",
+                            "protocol": "http",
+                            "host": [
+                                "localhost"
+                            ],
+                            "port": "8000",
+                            "path": [
+                                "api",
+                                "items",
+                                "available"
+                            ]
+                        }
+                    }
+                },
+                {
+                    "name": "Get My Items",
+                    "request": {
+                        "method": "GET",
+                        "header": [
+                            {
+                                "key": "Authorization",
+                                "value": "Bearer {{token}}"
+                            }
+                        ],
+                        "url": {
+                            "raw": "http://localhost:8000/api/items/my-items",
+                            "protocol": "http",
+                            "host": [
+                                "localhost"
+                            ],
+                            "port": "8000",
+                            "path": [
+                                "api",
+                                "items",
+                                "my-items"
+                            ]
+                        }
+                    }
+                },
+                {
+                    "name": "Get Item by ID",
+                    "request": {
+                        "method": "GET",
+                        "url": {
+                            "raw": "http://localhost:8000/api/items/{{itemId}}",
+                            "protocol": "http",
+                            "host": [
+                                "localhost"
+                            ],
+                            "port": "8000",
+                            "path": [
+                                "api",
+                                "items",
+                                "{{itemId}}"
+                            ]
+                        }
+                    }
+                }
+            ]
+        },
+        {
+            "name": "Swaps",
+            "item": [
+                {
+                    "name": "Initiate Swap (Product for Product)",
+                    "request": {
+                        "method": "POST",
+                        "header": [
+                            {
+                                "key": "Authorization",
+                                "value": "Bearer {{token}}"
+                            },
+                            {
+                                "key": "Content-Type",
+                                "value": "application/json"
+                            }
+                        ],
+                        "body": {
+                            "mode": "raw",
+                            "raw": "{\n  \"product1Id\": \"{{myProductId}}\",\n  \"product2Id\": \"{{otherProductId}}\",\n  \"message\": \"Would you like to swap?\"\n}"
+                        },
+                        "url": {
+                            "raw": "http://localhost:8000/api/swaps/initiate",
+                            "protocol": "http",
+                            "host": [
+                                "localhost"
+                            ],
+                            "port": "8000",
+                            "path": [
+                                "api",
+                                "swaps",
+                                "initiate"
+                            ]
+                        }
+                    }
+                },
+                {
+                    "name": "Approve Swap",
+                    "request": {
+                        "method": "PUT",
+                        "header": [
+                            {
+                                "key": "Authorization",
+                                "value": "Bearer {{token}}"
+                            }
+                        ],
+                        "url": {
+                            "raw": "http://localhost:8000/api/swaps/{{swapId}}/approve",
+                            "protocol": "http",
+                            "host": [
+                                "localhost"
+                            ],
+                            "port": "8000",
+                            "path": [
+                                "api",
+                                "swaps",
+                                "{{swapId}}",
+                                "approve"
+                            ]
+                        }
+                    }
+                },
+                {
+                    "name": "Reject Swap",
+                    "request": {
+                        "method": "PUT",
+                        "header": [
+                            {
+                                "key": "Authorization",
+                                "value": "Bearer {{token}}"
+                            }
+                        ],
+                        "url": {
+                            "raw": "http://localhost:8000/api/swaps/{{swapId}}/reject",
+                            "protocol": "http",
+                            "host": [
+                                "localhost"
+                            ],
+                            "port": "8000",
+                            "path": [
+                                "api",
+                                "swaps",
+                                "{{swapId}}",
+                                "reject"
+                            ]
+                        }
+                    }
+                },
+                {
+                    "name": "Complete Swap",
+                    "request": {
+                        "method": "PUT",
+                        "header": [
+                            {
+                                "key": "Authorization",
+                                "value": "Bearer {{token}}"
+                            }
+                        ],
+                        "url": {
+                            "raw": "http://localhost:8000/api/swaps/{{swapId}}/complete",
+                            "protocol": "http",
+                            "host": [
+                                "localhost"
+                            ],
+                            "port": "8000",
+                            "path": [
+                                "api",
+                                "swaps",
+                                "{{swapId}}",
+                                "complete"
+                            ]
+                        }
+                    }
+                },
+                {
+                    "name": "Cancel Swap",
+                    "request": {
+                        "method": "DELETE",
+                        "header": [
+                            {
+                                "key": "Authorization",
+                                "value": "Bearer {{token}}"
+                            }
+                        ],
+                        "url": {
+                            "raw": "http://localhost:8000/api/swaps/{{swapId}}/cancel",
+                            "protocol": "http",
+                            "host": [
+                                "localhost"
+                            ],
+                            "port": "8000",
+                            "path": [
+                                "api",
+                                "swaps",
+                                "{{swapId}}",
+                                "cancel"
+                            ]
+                        }
+                    }
+                },
+                {
+                    "name": "Get My Swaps",
+                    "request": {
+                        "method": "GET",
+                        "header": [
+                            {
+                                "key": "Authorization",
+                                "value": "Bearer {{token}}"
+                            }
+                        ],
+                        "url": {
+                            "raw": "http://localhost:8000/api/swaps/my-swaps",
+                            "protocol": "http",
+                            "host": [
+                                "localhost"
+                            ],
+                            "port": "8000",
+                            "path": [
+                                "api",
+                                "swaps",
+                                "my-swaps"
+                            ]
+                        }
+                    }
+                },
+                {
+                    "name": "Get Pending Swaps",
+                    "request": {
+                        "method": "GET",
+                        "header": [
+                            {
+                                "key": "Authorization",
+                                "value": "Bearer {{token}}"
+                            }
+                        ],
+                        "url": {
+                            "raw": "http://localhost:8000/api/swaps/pending",
+                            "protocol": "http",
+                            "host": [
+                                "localhost"
+                            ],
+                            "port": "8000",
+                            "path": [
+                                "api",
+                                "swaps",
+                                "pending"
+                            ]
+                        }
+                    }
+                },
+                {
+                    "name": "Get Swap by ID",
+                    "request": {
+                        "method": "GET",
+                        "header": [
+                            {
+                                "key": "Authorization",
+                                "value": "Bearer {{token}}"
+                            }
+                        ],
+                        "url": {
+                            "raw": "http://localhost:8000/api/swaps/{{swapId}}",
+                            "protocol": "http",
+                            "host": [
+                                "localhost"
+                            ],
+                            "port": "8000",
+                            "path": [
+                                "api",
+                                "swaps",
+                                "{{swapId}}"
+                            ]
+                        }
+                    }
+                },
+                {
+                    "name": "Points-Based Product for Product Swap",
+                    "request": {
+                        "method": "POST",
+                        "header": [
+                            {
+                                "key": "Authorization",
+                                "value": "Bearer {{token}}"
+                            },
+                            {
+                                "key": "Content-Type",
+                                "value": "application/json"
+                            }
+                        ],
+                        "body": {
+                            "mode": "raw",
+                            "raw": "{\n  \"product1Id\": \"{{myProductId}}\",\n  \"product2Id\": \"{{otherProductId}}\"\n}"
+                        },
+                        "url": {
+                            "raw": "http://localhost:8000/api/swaps/points-swap",
+                            "protocol": "http",
+                            "host": [
+                                "localhost"
+                            ],
+                            "port": "8000",
+                            "path": [
+                                "api",
+                                "swaps",
+                                "points-swap"
+                            ]
+                        }
+                    }
+                },
+                {
+                    "name": "Points-Based Product Acquisition (Coins for Product)",
+                    "request": {
+                        "method": "POST",
+                        "header": [
+                            {
+                                "key": "Authorization",
+                                "value": "Bearer {{token}}"
+                            },
+                            {
+                                "key": "Content-Type",
+                                "value": "application/json"
+                            }
+                        ],
+                        "body": {
+                            "mode": "raw",
+                            "raw": "{\n  \"productId\": \"{{itemId}}\"\n}"
+                        },
+                        "url": {
+                            "raw": "http://localhost:8000/api/swaps/points-acquire",
+                            "protocol": "http",
+                            "host": [
+                                "localhost"
+                            ],
+                            "port": "8000",
+                            "path": [
+                                "api",
+                                "swaps",
+                                "points-acquire"
+                            ]
+                        }
+                    }
+                }
+            ]
+        }
+    ],
+    "variable": [
+        {
+            "key": "token",
+            "value": ""
+        },
+        {
+            "key": "userId",
+            "value": ""
+        },
+        {
+            "key": "itemId",
+            "value": ""
+        },
+        {
+            "key": "myProductId",
+            "value": ""
+        },
+        {
+            "key": "otherProductId",
+            "value": ""
+        },
+        {
+            "key": "swapId",
+            "value": ""
+        }
+    ]
+}

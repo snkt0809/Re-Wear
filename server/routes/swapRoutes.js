@@ -9,7 +9,9 @@ const {
   rejectSwap,
   completeSwap,
   cancelSwap,
-  getSwapById
+  getSwapById,
+  pointsSwap,
+  pointsAcquire
 } = require('../controllers/swapController');
 
 // All routes require authentication
@@ -38,5 +40,11 @@ router.put('/:id/complete', completeSwap);
 
 // Cancel a swap request
 router.delete('/:id/cancel', cancelSwap);
+
+// Points-based swap endpoint
+router.post('/points-swap', pointsSwap);
+
+// Points-based product acquisition endpoint
+router.post('/points-acquire', pointsAcquire);
 
 module.exports = router; 
