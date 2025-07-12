@@ -1,0 +1,96 @@
+.auth-container {
+    max-width: 400px;
+    margin: 4rem auto;
+    background-color: var(--surface-color);
+    padding: 2rem;
+    border-radius: 6px;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+    color: var(--text-color);
+    border: 1px solid var(--border-color);
+  
+    h2 {
+      text-align: center;
+      margin-bottom: 1.5rem;
+      font-weight: 600;
+    }
+  
+        form {
+      display: flex;
+      flex-direction: column;
+
+      .form-group {
+        margin-bottom: 1rem;
+
+              label {
+        margin: 0.75rem 0 0.25rem;
+        font-size: 0.9rem;
+        color: var(--accent-color);
+        display: block;
+      }
+      }
+  
+      input {
+        padding: 0.75rem;
+        border: 1px solid var(--border-color);
+        border-radius: 6px;
+        background-color: var(--bg-color);
+        color: var(--text-color);
+        transition: all 0.2s ease-in-out;
+        width: 100%;
+        font-size: 1rem;
+  
+        &:focus {
+          outline: 2px solid var(--primary-color);
+          border-color: var(--primary-color);
+        }
+      }
+  
+      .error {
+        color: var(--error-color);
+        font-size: 0.85rem;
+        margin-top: 0.25rem;
+      }
+  
+      button {
+        margin-top: 1.5rem;
+        background-color: var(--primary-color);
+        color: #fff;
+        padding: 0.75rem;
+        border: none;
+        border-radius: 6px;
+        font-weight: bold;
+        cursor: pointer;
+        transition: all 0.2s ease-in-out;
+        font-size: 1rem;
+        width: 100%;
+  
+        &:hover:not(:disabled) {
+          background-color: var(--primary-color);
+          opacity: 0.9;
+        }
+  
+        &:disabled {
+          opacity: 0.6;
+          cursor: not-allowed;
+        }
+      }
+    }
+  
+    p {
+      text-align: center;
+      margin-top: 1rem;
+      font-size: 0.9rem;
+      color: var(--accent-color);
+  
+      a {
+        color: var(--primary-color);
+        text-decoration: underline;
+  
+        &:hover {
+          color: var(--primary-color);
+          opacity: 0.8;
+        }
+      }
+    }
+  }
+  
