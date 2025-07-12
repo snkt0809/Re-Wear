@@ -19,7 +19,11 @@ const userSchema = new mongoose.Schema({
   },
   points: {
     type: Number,
-    default: 100, // initial welcome points
+    default: 100,
+  },
+  isAdmin: {
+    type: Boolean,
+    default: false
   },
 }, { timestamps: true });
 
