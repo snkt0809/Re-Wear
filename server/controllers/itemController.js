@@ -139,3 +139,44 @@ exports.getMyItems = async (req, res) => {
     res.status(500).json({ message: 'Server error', error: error.message });
   }
 };
+
+// @desc    Get clothing item details by ID
+// @route   GET /api/items/:id
+// @access  Public
+exports.getItemById = async (req, res) => {
+  try {
+    const item = await Clothes.findById(req.params.id).populate('donorId', 'name email');
+    if (!item) return res.status(404).json({ message: 'Item not found' });
+    res.json(item);
+  } catch (error) {
+    res.status(500).json({ message: 'Server error', error: error.message });
+  }
+};
+
+// @desc    Get all clothing items with optional filters
+// @route   GET /api/items/clothes
+// @access  Public
+exports.getAllClothes = async (req, res) => {
+  try {
+    const { name, category, size, condition } = req.query;
+    const filter = {};
+
+    if (name) {
+      filter.title = { $regex: name, $options: 'i' }; // case-insensitive search
+    }
+    if (category) {
+      filter.category = category;
+    }
+    if (size) {
+      filter.size = size;
+    }
+    if (condition) {
+      filter.condition = condition;
+    }
+
+    const items = await Clothes.find(filter).populate('donorId', 'name');
+    res.json(items);
+  } catch (error) {
+    res.status(500).json({ message: 'Server error', error: error.message });
+  }
+};

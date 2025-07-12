@@ -327,4 +327,165 @@ exports.getSwapById = async (req, res) => {
   } catch (error) {
     res.status(500).json({ message: 'Server error', error: error.message });
   }
+};
+
+// @desc    Swap products based on points
+// @route   POST /api/swaps/points-swap
+// @access  Private
+exports.pointsSwap = async (req, res) => {
+  try {
+    const { product1Id, product2Id } = req.body;
+    const userId = req.user._id;
+
+    // Fetch both products
+    const product1 = await Clothes.findById(product1Id);
+    const product2 = await Clothes.findById(product2Id);
+
+    if (!product1 || !product2) {
+      return res.status(404).json({ message: 'One or both products not found' });
+    }
+
+    // Check if both products are available
+    if (!product1.available || !product2.available) {
+      return res.status(400).json({ message: 'One or both products are not available for swap' });
+    }
+
+    // Check if both products have points declared
+    if (typeof product1.points !== 'number' || typeof product2.points !== 'number') {
+      return res.status(400).json({ message: 'Both products must have points declared' });
+    }
+
+    // Fetch both users
+    const user1 = await User.findById(product1.donorId);
+    const user2 = await User.findById(product2.donorId);
+
+    if (!user1 || !user2) {
+      return res.status(404).json({ message: 'One or both users not found' });
+    }
+
+    // Only allow the owner of product1 (the requester) to initiate
+    if (userId.toString() !== user1._id.toString()) {
+      return res.status(403).json({ message: 'You can only swap your own product' });
+    }
+
+    // Check if both users have enough points
+    if (user1.points < product2.points) {
+      return res.status(400).json({ message: 'You do not have enough points to receive this product' });
+    }
+    if (user2.points < product1.points) {
+      return res.status(400).json({ message: 'The other user does not have enough points to receive your product' });
+    }
+
+    // Deduct/add points
+    user1.points = user1.points - product2.points + product1.points;
+    user2.points = user2.points - product1.points + product2.points;
+    await user1.save();
+    await user2.save();
+
+    // Mark products as unavailable
+    product1.available = false;
+    product2.available = false;
+    await product1.save();
+    await product2.save();
+
+    // Record the swap as completed
+    const swap = new Swap({
+      user1Id: user1._id,
+      product1Id: product1._id,
+      product1Name: product1.title,
+      user2Id: user2._id,
+      product2Id: product2._id,
+      product2Name: product2.title,
+      status: 'completed',
+      initiatedBy: user1._id,
+      approvedBy: user2._id,
+      completedAt: new Date()
+    });
+    await swap.save();
+
+    res.json({
+      message: 'Swap completed successfully based on points',
+      swap
+    });
+  } catch (error) {
+    res.status(500).json({ message: 'Server error', error: error.message });
+  }
+};
+
+// @desc    Acquire a product using points (no product offered, just coins)
+// @route   POST /api/swaps/points-acquire
+// @access  Private
+exports.pointsAcquire = async (req, res) => {
+  try {
+    const { productId } = req.body;
+    const userId = req.user._id;
+
+    // Fetch the product
+    const product = await Clothes.findById(productId);
+    if (!product) {
+      return res.status(404).json({ message: 'Product not found' });
+    }
+
+    // Check if product is available
+    if (!product.available) {
+      return res.status(400).json({ message: 'Product is not available for swap' });
+    }
+
+    // Check if product has points declared
+    if (typeof product.points !== 'number') {
+      return res.status(400).json({ message: 'Product does not have points declared' });
+    }
+
+    // Fetch the requesting user and the donor
+    const user = await User.findById(userId);
+    const donor = await User.findById(product.donorId);
+    if (!user || !donor) {
+      return res.status(404).json({ message: 'User or donor not found' });
+    }
+
+    // Prevent donor from acquiring their own product
+    if (userId.toString() === donor._id.toString()) {
+      return res.status(400).json({ message: 'You cannot acquire your own product' });
+    }
+
+    // Check if user has enough points
+    if (user.points < product.points) {
+      return res.status(400).json({ message: 'You do not have enough points to acquire this product' });
+    }
+
+    // Deduct points from user, add to donor
+    user.points -= product.points;
+    donor.points += product.points;
+    await user.save();
+    await donor.save();
+
+    // Mark product as unavailable and update owner
+    product.available = false;
+    product.ownerId = user._id;
+    await product.save();
+
+    // Record the swap as completed
+    const swap = new Swap({
+      user1Id: donor._id,
+      product1Id: product._id,
+      product1Name: product.title,
+      user2Id: user._id,
+      product2Id: null,
+      product2Name: null,
+      status: 'completed',
+      initiatedBy: user._id,
+      approvedBy: donor._id,
+      completedAt: new Date(),
+      message: 'Points-based acquisition'
+    });
+    await swap.save();
+
+    res.json({
+      message: 'Product acquired successfully using points',
+      swap,
+      product
+    });
+  } catch (error) {
+    res.status(500).json({ message: 'Server error', error: error.message });
+  }
 }; 

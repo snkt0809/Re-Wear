@@ -25,6 +25,11 @@ const clothesSchema = new mongoose.Schema({
     enum: ['New with tags', 'Like new', 'Excellent', 'Good', 'Fair', 'Poor'],
     default: 'Good'
   },
+  points: {
+    type: Number,
+    default: 10,
+    min: 0
+  },
   imageUrls: [{
     type: String,
     required: true
@@ -33,6 +38,11 @@ const clothesSchema = new mongoose.Schema({
     type: mongoose.Schema.Types.ObjectId,
     ref: 'User',
     required: true
+  },
+  ownerId: {
+    type: mongoose.Schema.Types.ObjectId,
+    ref: 'User',
+    default: function() { return this.donorId; }
   },
   location: {
     type: String,
