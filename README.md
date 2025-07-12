@@ -67,23 +67,14 @@ JWT_SECRET=shibamisagoodboy
 #### Start the backend
 
 ```bash
-node server.js
+npm dev
 ```
 
 ### 3. Set up the User Frontend (client/)
 
 ```bash
-cd ../client
-npm install
-ng serve
-```
-
-### 4. Set up the Admin Panel (admin/)
-
-```bash
-cd ../admin
-npm install
-ng serve --port 4300
+cd ./client
+npm start
 ```
 
 
