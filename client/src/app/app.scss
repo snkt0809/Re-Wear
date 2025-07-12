@@ -1,6 +1,6 @@
 // Main content styling
 .main-content {
-  min-height: calc(100vh - 70px); // Subtract navbar height
+  min-height: calc(100vh - 70px - 200px); // Subtract navbar and footer height
   padding: 2rem 1rem;
   max-width: 1200px;
   margin: 0 auto;
@@ -20,9 +20,12 @@
 }
 
 body {
-  background-color: var(--bg-color);
+  background: linear-gradient(135deg, #E8F5E8 0%, #F1F8E9 100%);
   color: var(--text-color);
   transition: background-color 0.3s ease, color 0.3s ease;
   margin: 0;
   font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
 }

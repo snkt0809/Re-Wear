@@ -125,12 +125,6 @@
           <button class="btn btn-primary" [routerLink]="['/item', item.id]">
             View Details
           </button>
-          <button class="btn btn-secondary" *ngIf="item.type === 'swap'">
-            Request Swap
-          </button>
-          <button class="btn btn-secondary" *ngIf="item.type === 'points'">
-            Redeem Points
-          </button>
         </div>
       </div>
     </div>

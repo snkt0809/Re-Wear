@@ -2,6 +2,7 @@ import { Component, OnInit } from '@angular/core';
 import { RouterModule, RouterOutlet } from '@angular/router';
 import { routes } from './app.routes';
 import { NavbarComponent } from './components/navbar/navbar.component';
+import { FooterComponent } from './components/footer/footer.component';
 import { Title } from '@angular/platform-browser';
 
 @Component({
@@ -12,7 +13,8 @@ import { Title } from '@angular/platform-browser';
   imports: [
    RouterOutlet,
    RouterModule,// Configure routes
-   NavbarComponent
+   NavbarComponent,
+   FooterComponent
   ],
 })
 export class App implements OnInit {

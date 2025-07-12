@@ -18,7 +18,6 @@
     <div class="navbar-nav desktop-nav">
       <a routerLink="/" routerLinkActive="active" [routerLinkActiveOptions]="{exact: true}" class="nav-link">Home</a>
       <a routerLink="/browse" routerLinkActive="active" class="nav-link">Browse</a>
-      <a routerLink="/swap" routerLinkActive="active" class="nav-link">Swap</a>
       <a routerLink="/list" routerLinkActive="active" class="nav-link">List Item</a>
       <a routerLink="/dashboard" routerLinkActive="active" class="nav-link">Dashboard</a>
     </div>
@@ -113,7 +112,6 @@
   <div class="mobile-nav" [class.active]="isMenuOpen">
     <a routerLink="/" routerLinkActive="active" [routerLinkActiveOptions]="{exact: true}" class="mobile-nav-link" (click)="closeMenu()">Home</a>
     <a routerLink="/browse" routerLinkActive="active" class="mobile-nav-link" (click)="closeMenu()">Browse</a>
-    <a routerLink="/swap" routerLinkActive="active" class="mobile-nav-link" (click)="closeMenu()">Swap</a>
     <a routerLink="/list" routerLinkActive="active" class="mobile-nav-link" (click)="closeMenu()">List Item</a>
     <a routerLink="/cart" class="mobile-nav-link" (click)="closeMenu()">Cart</a>
     
