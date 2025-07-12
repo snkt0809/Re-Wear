@@ -3,7 +3,8 @@ import { Component, OnInit, inject, Inject, PLATFORM_ID, OnDestroy } from '@angu
 import { RouterModule } from '@angular/router';
 import { FormsModule } from '@angular/forms';
 import { isPlatformBrowser } from '@angular/common';
-import { AuthService, User } from '../../services/auth.service';
+import { AuthService } from '../../services/auth.service';
+import { User } from '../../services/api.service';
 import { Subscription } from 'rxjs';
 
 @Component({

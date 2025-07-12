@@ -8,7 +8,7 @@
     <div class="cta-buttons">
       <a routerLink="/browse" class="btn btn-primary">Browse Items</a>
       <a routerLink="/list" class="btn btn-secondary">List an Item</a>
-      <a routerLink="/register" class="btn btn-outline">Join ReWear</a>
+      <a *ngIf="!currentUser" routerLink="/register" class="btn btn-outline">Join ReWear</a>
     </div>
   </div>
 
@@ -106,4 +106,7 @@
       </div>
     </div>
   </div>
+
+  <!-- Chatbot Component -->
+  <app-chatbot></app-chatbot>
 </div> 

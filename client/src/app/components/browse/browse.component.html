@@ -35,12 +35,7 @@
           </select>
         </div>
 
-        <div class="filter-group">
-          <label>Type</label>
-          <select formControlName="type">
-            <option *ngFor="let type of types" [value]="type">{{ type }}</option>
-          </select>
-        </div>
+
 
         <div class="filter-group">
           <label>Size</label>
@@ -76,11 +71,8 @@
   <div class="items-grid" *ngIf="filteredItems.length > 0">
     <div class="item-card" *ngFor="let item of filteredItems">
       <div class="item-image">
-        <img [src]="item.image" [alt]="item.title">
+        <img [src]="item.images[0]" [alt]="item.title">
         <div class="item-badges">
-          <span class="type-badge" [style.background-color]="getTypeColor(item.type)">
-            {{ getTypeText(item.type) }}
-          </span>
           <span class="condition-badge" [style.background-color]="getConditionColor(item.condition)">
             {{ item.condition | titlecase }}
           </span>
@@ -110,7 +102,6 @@
           <div class="uploader-details">
             <span class="uploader-name">{{ item.uploader.name }}</span>
             <div class="uploader-stats">
-              <span class="rating">⭐ {{ item.uploader.rating }}</span>
               <span class="swaps">{{ item.uploader.swapsCompleted }} swaps</span>
             </div>
           </div>

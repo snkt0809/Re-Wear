@@ -41,11 +41,6 @@
 
       <!-- User Actions -->
       <div class="user-actions">
-        <a routerLink="/cart" class="action-link" title="Shopping Cart">
-          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-            <path d="M3 3H5L5.4 5M7 13H17L21 5H5.4M7 13L5.4 5M7 13L4.7 15.3C4.3 15.7 4.6 16.5 5.1 16.5H17M17 13V17C17 18.1 16.1 19 15 19H9C7.9 19 7 18.1 7 17V13H17Z" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
-          </svg>
-        </a>
         
         <!-- Show Login Button when not logged in -->
         <a *ngIf="!currentUser" routerLink="/login" class="login-btn" title="Login">
@@ -113,7 +108,6 @@
     <a routerLink="/" routerLinkActive="active" [routerLinkActiveOptions]="{exact: true}" class="mobile-nav-link" (click)="closeMenu()">Home</a>
     <a routerLink="/browse" routerLinkActive="active" class="mobile-nav-link" (click)="closeMenu()">Browse</a>
     <a routerLink="/list" routerLinkActive="active" class="mobile-nav-link" (click)="closeMenu()">List Item</a>
-    <a routerLink="/cart" class="mobile-nav-link" (click)="closeMenu()">Cart</a>
     
     <!-- Show Dashboard when logged in -->
     <a *ngIf="currentUser" routerLink="/dashboard" routerLinkActive="active" class="mobile-nav-link" (click)="closeMenu()">Dashboard</a>

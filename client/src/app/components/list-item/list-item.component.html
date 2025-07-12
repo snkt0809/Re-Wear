@@ -1,4 +1,4 @@
-<div class="list-item-container">
+<div class="list-item-container" *ngIf="isAuthenticated">
   <div class="list-item-header">
     <h1>List a New Item</h1>
     <p>Share your sustainable fashion items with the ReWear community</p>
@@ -81,25 +81,7 @@
           </div>
 
           <div class="form-group">
-            <label for="type">Listing Type *</label>
-            <select 
-              id="type" 
-              formControlName="type" 
-              class="form-control"
-              [class.invalid]="isFieldInvalid('type')">
-              <option *ngFor="let type of types" [value]="type.value">
-                {{ type.label }}
-              </option>
-            </select>
-            <div class="error-message" *ngIf="getErrorMessage('type')">
-              {{ getErrorMessage('type') }}
-            </div>
-          </div>
-        </div>
-
-        <div class="form-row" *ngIf="listItemForm.get('type')?.value !== 'swap'">
-          <div class="form-group">
-            <label for="points">Points Required</label>
+            <label for="points">Points Required *</label>
             <input 
               type="number" 
               id="points" 
@@ -107,12 +89,14 @@
               class="form-control"
               [class.invalid]="isFieldInvalid('points')"
               placeholder="50"
-              min="0">
+              min="1">
             <div class="error-message" *ngIf="getErrorMessage('points')">
               {{ getErrorMessage('points') }}
             </div>
           </div>
+        </div>
 
+        <div class="form-row">
           <div class="form-group">
             <label for="location">Location *</label>
             <input 
@@ -259,5 +243,14 @@
         Go to Dashboard
       </button>
     </div>
+  </div>
+</div>
+
+<!-- Not Authenticated State -->
+<div class="not-authenticated" *ngIf="!isAuthenticated">
+  <div class="empty-state">
+    <h2>Please log in to list an item</h2>
+    <p>You need to be logged in to list items on ReWear.</p>
+    <a routerLink="/login" class="btn btn-primary">Log In</a>
   </div>
 </div> 

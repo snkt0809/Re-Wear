@@ -11,7 +11,7 @@
   h1 {
     font-size: 2.5rem;
     font-weight: 700;
-    color: var(--text-color);
+    color: var(--text-primary);
     margin-bottom: 0.5rem;
     background: linear-gradient(135deg, #4CAF50, #66BB6A);
     -webkit-background-clip: text;
@@ -20,7 +20,7 @@
   }
 
   p {
-    color: var(--accent-color);
+    color: var(--text-secondary);
     font-size: 1.1rem;
     max-width: 600px;
     margin: 0 auto;
@@ -29,12 +29,12 @@
 
 // Filters Section
 .filters-section {
-  background: white;
+  background: var(--card-bg);
   border-radius: 12px;
   padding: 2rem;
   margin-bottom: 2rem;
-  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
-  border: 1px solid var(--border-color);
+  box-shadow: var(--shadow);
+  border: 1px solid var(--card-border);
 
   .filters-form {
     .search-bar {
@@ -48,7 +48,7 @@
         svg {
           position: absolute;
           left: 1rem;
-          color: var(--accent-color);
+          color: var(--text-secondary);
           z-index: 1;
         }
 
@@ -58,8 +58,8 @@
           border: 2px solid var(--border-color);
           border-radius: 8px;
           font-size: 1rem;
-          background: var(--bg-color);
-          color: var(--text-color);
+          background: var(--background-primary);
+          color: var(--text-primary);
           transition: all 0.3s ease;
 
           &:focus {
@@ -69,7 +69,7 @@
           }
 
           &::placeholder {
-            color: var(--accent-color);
+            color: var(--text-secondary);
           }
         }
       }
@@ -88,7 +88,7 @@
 
         label {
           font-weight: 600;
-          color: var(--text-color);
+          color: var(--text-primary);
           font-size: 0.9rem;
         }
 
@@ -96,8 +96,8 @@
           padding: 0.75rem;
           border: 2px solid var(--border-color);
           border-radius: 6px;
-          background: var(--bg-color);
-          color: var(--text-color);
+          background: var(--background-primary);
+          color: var(--text-primary);
           font-size: 1rem;
           cursor: pointer;
           transition: all 0.3s ease;
@@ -135,7 +135,7 @@
   margin-bottom: 2rem;
   
   p {
-    color: var(--accent-color);
+    color: var(--text-secondary);
     font-size: 1rem;
     font-weight: 500;
   }
@@ -149,12 +149,12 @@
   margin-bottom: 3rem;
 
   .item-card {
-    background: white;
+    background: var(--card-bg);
     border-radius: 12px;
     overflow: hidden;
-    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
+    box-shadow: var(--shadow);
     transition: all 0.3s ease;
-    border: 1px solid var(--border-color);
+    border: 1px solid var(--card-border);
 
     &:hover {
       transform: translateY(-4px);

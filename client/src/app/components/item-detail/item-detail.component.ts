@@ -2,29 +2,9 @@ import { CommonModule } from '@angular/common';
 import { Component, OnInit } from '@angular/core';
 import { ActivatedRoute, Router, RouterModule } from '@angular/router';
 import { FormBuilder, FormGroup, Validators, ReactiveFormsModule } from '@angular/forms';
+import { ApiService, Item, SwapRequest } from '../../services/api.service';
 
-interface Item {
-  id: string;
-  title: string;
-  description: string;
-  category: string;
-  size: string;
-  condition: string;
-  type: 'swap' | 'points';
-  points: number;
-  images: string[];
-  tags: string[];
-  location: string;
-  availability: 'available' | 'pending' | 'sold';
-  uploader: {
-    name: string;
-    rating: number;
-    swapsCompleted: number;
-    memberSince: string;
-    avatar: string;
-  };
-  createdAt: string;
-}
+
 
 @Component({
   selector: 'app-item-detail',
@@ -43,7 +23,8 @@ export class ItemDetailComponent implements OnInit {
   constructor(
     private route: ActivatedRoute,
     public router: Router,
-    private fb: FormBuilder
+    private fb: FormBuilder,
+    private apiService: ApiService
   ) {
     this.swapRequestForm = this.fb.group({
       message: ['', [Validators.required, Validators.minLength(10)]],
@@ -59,36 +40,17 @@ export class ItemDetailComponent implements OnInit {
   }
 
   loadItem(itemId: string): void {
-    // Mock data - in real app, this would be an API call
-    setTimeout(() => {
-      this.item = {
-        id: itemId,
-        title: 'Vintage Denim Jacket',
-        description: 'Beautiful vintage denim jacket in excellent condition. This classic piece features a timeless design with comfortable fit. Perfect for layering or as a statement piece. Made from high-quality denim that has aged beautifully.',
-        category: 'Outerwear',
-        size: 'M',
-        condition: 'Excellent',
-        type: 'swap',
-        points: 150,
-        images: [
-          'https://images.unsplash.com/photo-1576995853123-5a10305d93c0?w=400',
-          'https://images.unsplash.com/photo-1594633312681-425c7b97ccd1?w=400',
-          'https://images.unsplash.com/photo-1594633312681-425c7b97ccd1?w=400'
-        ],
-        tags: ['vintage', 'denim', 'jacket', 'casual'],
-        location: 'San Francisco, CA',
-        availability: 'available',
-        uploader: {
-          name: 'Sarah Johnson',
-          rating: 4.8,
-          swapsCompleted: 23,
-          memberSince: '2023',
-          avatar: 'https://images.unsplash.com/photo-1494790108755-2616b612b786?w=100'
-        },
-        createdAt: '2024-01-15'
-      };
-      this.isLoading = false;
-    }, 500);
+    this.apiService.getItemById(itemId).subscribe({
+      next: (item: Item) => {
+        this.item = item;
+        this.isLoading = false;
+      },
+      error: (error) => {
+        console.error('Error loading item:', error);
+        this.isLoading = false;
+        // Handle error (show error message or redirect)
+      }
+    });
   }
 
   setCurrentImage(index: number): void {
@@ -117,19 +79,39 @@ export class ItemDetailComponent implements OnInit {
   }
 
   submitSwapRequest(): void {
-    if (this.swapRequestForm.valid) {
-      // Handle swap request submission
-      console.log('Swap request submitted:', this.swapRequestForm.value);
-      this.closeSwapModal();
-      // Show success message
+    if (this.swapRequestForm.valid && this.item) {
+      const swapData: SwapRequest = {
+        product1Id: this.item.id, // The item I want to swap FOR (other person's item)
+        product2Id: this.swapRequestForm.value.proposedItem, // My item that I'm offering
+        message: this.swapRequestForm.value.message
+      };
+      
+      this.apiService.initiateSwap(swapData).subscribe({
+        next: (response) => {
+          console.log('Swap request submitted successfully:', response);
+          this.closeSwapModal();
+          // Show success message
+        },
+        error: (error) => {
+          console.error('Error submitting swap request:', error);
+          // Handle error (show error message)
+        }
+      });
     }
   }
 
   redeemWithPoints(): void {
     if (this.item) {
-      // Handle points redemption
-      console.log('Redeeming item with points:', this.item.id);
-      // Show confirmation modal
+      this.apiService.redeemWithPoints(this.item.id).subscribe({
+        next: (response) => {
+          console.log('Item redeemed successfully:', response);
+          // Show success message and redirect
+        },
+        error: (error) => {
+          console.error('Error redeeming item:', error);
+          // Handle error (show error message)
+        }
+      });
     }
   }
 

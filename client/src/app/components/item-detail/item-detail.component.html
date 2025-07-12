@@ -87,12 +87,13 @@
         <h3>Listed by</h3>
         <div class="uploader-card">
           <div class="uploader-avatar">
-            <img [src]="item.uploader.avatar" [alt]="item.uploader.name">
+            <div class="avatar-placeholder">
+              {{ item.uploader.name.charAt(0) }}
+            </div>
           </div>
           <div class="uploader-details">
             <h4>{{ item.uploader.name }}</h4>
             <div class="uploader-stats">
-              <span class="rating">⭐ {{ item.uploader.rating }}</span>
               <span class="swaps">{{ item.uploader.swapsCompleted }} swaps completed</span>
               <span class="member-since">Member since {{ item.uploader.memberSince }}</span>
             </div>
@@ -102,7 +103,7 @@
 
       <!-- Action Buttons -->
       <div class="action-section">
-        <div class="points-info" *ngIf="item.type === 'points'">
+        <div class="points-info">
           <span class="points-label">Points Required:</span>
           <span class="points-value">{{ item.points }} points</span>
         </div>
@@ -110,13 +111,13 @@
         <div class="action-buttons">
           <button 
             class="btn btn-primary btn-large" 
-            *ngIf="item.type === 'swap' && item.availability === 'available'"
+            *ngIf="item.availability === 'available'"
             (click)="openSwapModal()">
             Request Swap
           </button>
           <button 
-            class="btn btn-primary btn-large" 
-            *ngIf="item.type === 'points' && item.availability === 'available'"
+            class="btn btn-secondary btn-large" 
+            *ngIf="item.availability === 'available'"
             (click)="redeemWithPoints()">
             Redeem with Points
           </button>
@@ -151,14 +152,20 @@
     </div>
     
     <form [formGroup]="swapRequestForm" (ngSubmit)="submitSwapRequest()">
+      <div class="swap-info">
+        <p><strong>You want to swap FOR:</strong> {{ item?.title }}</p>
+        <p><strong>You will offer:</strong> (select your item below)</p>
+      </div>
+      
       <div class="form-group">
-        <label for="proposedItem">What would you like to swap?</label>
+        <label for="proposedItem">Select your item to offer in exchange</label>
         <select id="proposedItem" formControlName="proposedItem" class="form-control">
-          <option value="">Select an item to offer</option>
-          <option value="item1">Vintage T-Shirt (M)</option>
-          <option value="item2">Denim Jeans (32)</option>
-          <option value="item3">Sneakers (US 9)</option>
+          <option value="">Choose an item from your listings</option>
+          <option value="item1">Vintage T-Shirt (M) - 80 points</option>
+          <option value="item2">Denim Jeans (32) - 120 points</option>
+          <option value="item3">Sneakers (US 9) - 150 points</option>
         </select>
+        <small class="form-help">This will be the item you're offering to swap for {{ item?.title }}</small>
       </div>
       
       <div class="form-group">

@@ -1,6 +1,9 @@
 import { CommonModule, isPlatformBrowser } from '@angular/common';
 import { Component, OnInit, Inject, PLATFORM_ID, OnDestroy } from '@angular/core';
 import { RouterModule } from '@angular/router';
+import { ChatbotComponent } from '../chatbot/chatbot.component';
+import { AuthService } from '../../services/auth.service';
+import { User } from '../../services/api.service';
 
 interface FeaturedItem {
   id: number;
@@ -19,14 +22,19 @@ interface FeaturedItem {
   styleUrls: ['./home.component.scss'],
   imports: [
     CommonModule,
-    RouterModule
+    RouterModule,
+    ChatbotComponent
   ]
 })
 export class HomeComponent implements OnInit, OnDestroy {
   currentSlide = 0;
   private carouselInterval: any;
+  currentUser: User | null = null;
 
-  constructor(@Inject(PLATFORM_ID) private platformId: Object) {}
+  constructor(
+    @Inject(PLATFORM_ID) private platformId: Object,
+    private authService: AuthService
+  ) {}
   featuredItems: FeaturedItem[] = [
     {
       id: 1,
@@ -76,6 +84,9 @@ export class HomeComponent implements OnInit, OnDestroy {
   ];
 
   ngOnInit(): void {
+    // Get current user
+    this.currentUser = this.authService.getCurrentUser();
+    
     // Auto-advance carousel every 5 seconds (only in browser)
     if (isPlatformBrowser(this.platformId)) {
       this.carouselInterval = setInterval(() => {
