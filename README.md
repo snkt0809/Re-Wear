@@ -58,12 +58,6 @@ cd server
 npm install
 ```
 
-#### Create .env (optional)
-
-MONGO_URI=mongodb+srv://Shibam9064:EjaPjODb1qtq24ft@cluster0.yctg4cl.mongodb.net/rewear
-PORT=8000
-JWT_SECRET=shibamisagoodboy
-
 #### Start the backend
 
 ```bash
